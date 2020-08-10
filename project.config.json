@@ -22,7 +22,7 @@
 	},
 	"compileType": "miniprogram",
 	"appid": "wx922ee05ee8c518ef",
-	"projectname": "%E4%BA%94%E7%9F%BF%E5%8A%A0%E6%B2%B9",
+	"projectname": "五矿加油",
 	"miniprogramRoot": "dist/",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},

@@ -1,45 +1,31 @@
 import fetch from './ajax'
 class XHR {
-  getUnionid (json) {  // 获取openId
+  getAccessToken (json) {  // access_Token
     return fetch({
-      url: `${fetch.URLS}/smallLogin.do`,
+      url: `${fetch.URLS}/auth/getAccessToken`,
       body: json,
-      type: 'POST'
+      type: 'GET'
     })
   }
-  authorization (json) {  // 授权存储
+  getOpenId (json) {  // 获取openId
     return fetch({
-      url: `${fetch.URLS}/smallSignup.do`,
+      url: `${fetch.URLS}/auth/login`,
       body: json,
-      type: 'POST'
+      type: 'GET'
     })
   }
-  getPhoneCode(json) { // 获取手机号
+  register (json) {  // 注册会员信息
     return fetch({
-      url: `${fetch.URLS}/mobileSignup.do`,
+      url: `${fetch.URLS}/user/register`,
       body: json,
       type: 'POST'
     })
   }
   queryUser(json) { // 获取用户信息
     return fetch({
-      url: `${fetch.URLS}/queryUser.do`,
+      url: `${fetch.URLS}/user/queryUser`,
       body: json,
-      type: 'POST'
-    })
-  }
-  submitPhone(json) { // 提交手机号
-    return fetch({
-      url: `${fetch.URLS}/mobileLogin.do`,
-      body: json,
-      type: 'POST'
-    })
-  }
-  editPhone(json) { // 修改手机号
-    return fetch({
-      url: `${fetch.URLS}/updateMobile.do`,
-      body: json,
-      type: 'POST'
+      type: 'GET'
     })
   }
 }

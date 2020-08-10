@@ -15,14 +15,15 @@ import 'wepy-async-function'
 
 import { setStore } from 'wepy-redux'
 import configStore from './store'
-
+import XHR from './api'
 const store = configStore()
 setStore(store)
 
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/index'
+      'pages/index',
+      'pages/authorization'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -48,7 +49,7 @@ export default class extends wepy.app {
     this.use('promisify')
   }
 
-  onLaunch() {
+  async onLaunch() {
     const updateManager = wx.getUpdateManager()
     updateManager.onCheckForUpdate(function (res) {
       // 请求完新版本信息的回调
@@ -73,6 +74,49 @@ export default class extends wepy.app {
         content: '新版本下载失败',
         showCancel: false
       })
+    })
+    let openId = wepy.getStorageSync('openId')
+    if (!openId) {
+      let res = await wepy.login()
+      this.getopenId(res.code)
+    } else {
+      this.globalData.openId = openId
+      this.queryUser(openId)
+    }
+    wx.removeStorageSync('tapIndex')
+  }
+  getopenId (code) {
+    let json = {code}
+    XHR.getOpenId(json).then(res => {
+      if (res.statusCode === 200) {
+        let {data, status} = res.data
+        if (status === 0) {
+          wx.setStorageSync('openId', data.openId)
+          this.globalData.openId = data.openId
+          this.queryUser(data.openId)
+        } else {
+          wepy.redirectTo({
+            url: '/pages/authorization'
+          })
+        }
+      }
+    }).catch(res=>{
+      wepy.redirectTo({
+        url: '/pages/authorization'
+      })
+    })
+  }
+  queryUser(openId) {
+    let json = {openId}
+    XHR.queryUser(json).then(res => {
+      if (res.statusCode === 200) {
+        let {data, status} = res.data
+        if (!status) {
+          this.globalData.userInfo = data
+          wepy.setStorageSync('userinfo', data)
+          wepy.setStorageSync('phone', data.mobilePhone)
+        }
+      }
     })
   }
 }
