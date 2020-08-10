@@ -75,13 +75,13 @@ export default class extends wepy.app {
         showCancel: false
       })
     })
-    let openId = wepy.getStorageSync('openId')
-    if (!openId) {
+    let openid = wepy.getStorageSync('openid')
+    if (!openid) {
       let res = await wepy.login()
       this.getopenId(res.code)
     } else {
-      this.globalData.openId = openId
-      this.queryUser(openId)
+      this.globalData.openid = openid
+      this.queryUser(openid)
     }
     wx.removeStorageSync('tapIndex')
   }
@@ -91,19 +91,11 @@ export default class extends wepy.app {
       if (res.statusCode === 200) {
         let {data, status} = res.data
         if (status === 0) {
-          wx.setStorageSync('openId', data.openId)
-          this.globalData.openId = data.openId
-          this.queryUser(data.openId)
-        } else {
-          wepy.redirectTo({
-            url: '/pages/authorization'
-          })
+          wx.setStorageSync('openid', data.openid)
+          this.globalData.openid = data.openid
+          this.queryUser(data.openid)
         }
       }
-    }).catch(res=>{
-      wepy.redirectTo({
-        url: '/pages/authorization'
-      })
     })
   }
   queryUser(openId) {
@@ -111,10 +103,14 @@ export default class extends wepy.app {
     XHR.queryUser(json).then(res => {
       if (res.statusCode === 200) {
         let {data, status} = res.data
-        if (!status) {
+        if (!status && data) {
           this.globalData.userInfo = data
           wepy.setStorageSync('userinfo', data)
           wepy.setStorageSync('phone', data.mobilePhone)
+        } else {
+          wepy.redirectTo({
+            url: '/pages/authorization'
+          })
         }
       }
     })
