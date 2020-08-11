@@ -8,10 +8,7 @@ const fetch = ({url, body, type}) => {
     return wepy.request({
       url,
       data: body,
-      method: 'POST',
-      header: {
-        'content-type': 'application/x-www-form-urlencoded' // 默认值
-      }
+      method: 'POST'
     })
   } else {
     return wepy.request({ url, data: body })

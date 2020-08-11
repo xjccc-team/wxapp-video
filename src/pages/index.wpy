@@ -1,7 +1,11 @@
 
 <template>
-  <view class="container">
-   
+ <view class="container">
+   <image class="bg" src="../images/bg.jpg" />
+    <image class="banner" src="../images/banner.png" />
+    <button type="default" hover-class="none" open-type="getUserInfo" bindgetuserinfo="bindgetuserinfo">授权登陆</button>
+    <button type="default" hover-class="none" open-type="getPhoneNumber" plain bindgetphonenumber="gohome">手机号授权</button>
+    <text class="des">允许微信授权功能后，可体验更多功能</text>
   </view>
 </template>
 
@@ -36,4 +40,34 @@
   }
 </script>
 <style lang="less">
+.container{
+  padding: 0 32rpx;
+  text-align: center;
+  position: relative;
+  color:#fff;
+  .bg{
+    flex:1;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+  }
+  .banner{
+    margin:86rpx auto 0;
+    width: 499rpx;
+    height: 432rpx;
+  }
+  .des{
+    margin:60rpx auto;
+    display: block;
+    font-size: 40rpx;
+  }
+  button{
+    margin-top: 20rpx;
+  }
+}
 </style>

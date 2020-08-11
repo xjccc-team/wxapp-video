@@ -2,10 +2,23 @@
 .container{
   padding: 0 32rpx;
   text-align: center;
-  .img{
-    margin:60rpx auto 0;
-    width: 281rpx;
-    height: 260rpx;
+  position: relative;
+  color:#fff;
+  .bg{
+    flex:1;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+  }
+  .banner{
+    margin:86rpx auto 0;
+    width: 499rpx;
+    height: 432rpx;
   }
   .des{
     margin:60rpx auto;
@@ -19,10 +32,11 @@
 </style>
 <template>
   <view class="container">
-   <image class="img" src="../images/auto.png" />
-   <text class="des">允许微信授权功能后，可体验更多功能</text>
-   <button type="primary" hover-class="none" open-type="getUserInfo" bindgetuserinfo="bindgetuserinfo">授权登陆</button>
-   <button type="default" hover-class="none" plain bindtap="gohome">手机号授权</button>
+   <image class="bg" src="../images/bg.jpg" />
+    <image class="banner" src="../images/banner.png" />
+    <button type="default" hover-class="none" open-type="getUserInfo" bindgetuserinfo="bindgetuserinfo">授权登陆</button>
+    <button type="default" hover-class="none" open-type="getPhoneNumber" plain bindgetphonenumber="gohome">手机号授权</button>
+    <text class="des">允许微信授权功能后，可体验更多功能</text>
   </view>
 </template>
 
@@ -57,9 +71,7 @@
     }
     bindgetuserinfo(res) {
       if (res.detail.userInfo) {
-        try {
-          this.toAuthorization(res.detail.userInfo)
-        } catch (e) { }
+        this.toAuthorization(res.detail.userInfo)
       } else {
         this.showToast('很遗憾，您拒绝了微信授权，宝宝很伤心', function() {
           setTimeout(() => {
@@ -71,7 +83,7 @@
       }
     }
     toAuthorization(json) {
-      json.openId = wepy.getStorageSync('openId') || '无'
+      json.openId = wepy.getStorageSync('openid') || '无'
       XHR.register(json).then(res => {
         if (res.statusCode === 200) {
           this.authorOk(json)
