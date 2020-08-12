@@ -28,6 +28,13 @@ class XHR {
       type: 'GET'
     })
   }
+  decodeMobile (json) { // 手机号解密
+    return fetch({
+      url: `${fetch.URLS}/user/decodeMobile`,
+      body: json,
+      type: 'POST'
+    })
+  }
   registerMobile (json) { // 手机号授权
     return fetch({
       url: `${fetch.URLS}/user/registerMobile`,

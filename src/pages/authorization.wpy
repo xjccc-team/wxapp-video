@@ -98,38 +98,51 @@
   
     }
     bindPhone(res) {
-      wx.checkSession({
-        success: (ress) => {
-          if (res.detail.phoneNumber) {
+      if (res.detail.encryptedData) {
+        wx.checkSession({
+          success: (ress) => {
             const json = {
-              sessionKey: this.sessionKey,
+              encryptedData: res.detail.encryptedData,
+              iv: res.detail.iv,
+              sessionKey: this.sessionKey
+            }
+            this.decodeMobile(json)
+          },
+          fail: async () => {
+            // session_key 已经失效，需要重新执行登录流程
+            await this.getSessionKey()
+            const json = {
+              encryptedData: res.detail.encryptedData,
+              iv: res.detail.iv,
+              sessionKey: this.sessionKey
+            }
+            this.decodeMobile(json)
+          }
+        })
+      }
+    }
+    decodeMobile (json) {
+      wx.showLoading({
+        title: '加载中'
+      })
+      XHR.decodeMobile(json).then(res => {
+        if (res.statusCode === 200) {
+          if (res.data.phoneNumber) {
+            let formDate = {
+              mobilePhone: res.data.phoneNumber,
               openId: this.openid
             }
-            this.registerMobile(json)
+            this.registerMobile(formDate)
           }
-        },
-        fail: async () => {
-          // session_key 已经失效，需要重新执行登录流程
-          await this.getSessionKey()
-          const json = {
-            sessionKey: this.sessionKey,
-            openId: this.openid
-          }
-          this.registerMobile(json)
         }
       })
     }
     registerMobile (json) {
       XHR.registerMobile(json).then(res => {
-        if (res.statusCode === 200) {
-          wx.reLaunch({
-            url: '/pages/index'
-          })
-        } else {
-          console.log('接口异常')
-        }
-      }).catch(e => {
-        console.log('接口异常')
+        wx.hideLoading()
+        wx.reLaunch({
+          url: '/pages/index'
+        })
       })
     }
     async getSessionKey () {

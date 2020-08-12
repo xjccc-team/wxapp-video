@@ -2,9 +2,9 @@
 <template>
  <view class="container">
     <image class="bg" src="../images/bg.jpg" />
-    <view class="user-video">
+    <view class="user-video" wx:if="{{videoSrc}}">
       <view class="video">
-        <video class="video" wx:if="{{videoSrc}}" src="{{videoSrc}}" controls></video>
+        <video class="video"  src="{{videoSrc}}" controls></video>
       </view>
       <button type="default" hover-class="none" class="submit" @tap="choseVideo" plain >提交</button>
    </view>
@@ -47,13 +47,27 @@
       }
     }
     choseVideo () {
-      wx.chooseVideo({
+      // wx.chooseVideo({
+      //   sourceType: ['album', 'camera'],
+      //   maxDuration: 30,
+      //   camera: 'front',
+      //   success: (res) => {
+      //     console.log(res)
+      //     this.setData({videoSrc: res.tempFilePath})
+      //     this.videoSrc = res.tempFilePath
+      //   }
+      // })
+      wx.chooseMedia({
+        count: 1,
+        mediaType: ['video'],
         sourceType: ['album', 'camera'],
-        maxDuration: 30,
-        camera: 'front',
-        success: (res) => {
-          this.setData({videoSrc: res.tempFilePath})
-          this.videoSrc = res.tempFilePath
+        maxDuration: 15,
+        camera: 'back',
+        success(res) {
+          this.setData({videoSrc: res.tempFiles[0].tempFilePath})
+          this.videoSrc = res.tempFiles[0].tempFilePath
+          console.log(res.tempFiles.tempFilePath)
+          console.log(res)
         }
       })
     }

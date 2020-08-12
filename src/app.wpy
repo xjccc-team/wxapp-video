@@ -98,7 +98,7 @@ export default class extends wepy.app {
     XHR.queryUser(json).then(res => {
       if (res.statusCode === 200) {
         let {data, status} = res.data
-        if (!status && data) {
+        if (!status && data !== null) {
           this.globalData.userInfo = data
           wepy.setStorageSync('userinfo', data)
           if (!data.mobilePhone) {
@@ -109,7 +109,9 @@ export default class extends wepy.app {
             wepy.setStorageSync('phone', data.mobilePhone)
           }
         } else {
-          wx.reLaunch({
+          wepy.removeStorageSync('phone')
+          wepy.removeStorageSync('userinfo')
+          wepy.reLaunch({
             url: '/pages/authorization'
           })
         }
