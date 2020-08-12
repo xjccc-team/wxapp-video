@@ -42,6 +42,13 @@ class XHR {
       type: 'POST'
     })
   }
+  upload (json) { // 上传视频
+    return fetch({
+      url: `${fetch.URLS}/video/upload`,
+      body: json,
+      type: 'POST'
+    })
+  }
 }
 
 export default new XHR()

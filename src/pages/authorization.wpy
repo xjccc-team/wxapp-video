@@ -97,28 +97,14 @@
     methods = {
   
     }
-    bindPhone(res) {
+    async bindPhone(res) {
       if (res.detail.encryptedData) {
-        wx.checkSession({
-          success: (ress) => {
-            const json = {
-              encryptedData: res.detail.encryptedData,
-              iv: res.detail.iv,
-              sessionKey: this.sessionKey
-            }
-            this.decodeMobile(json)
-          },
-          fail: async () => {
-            // session_key 已经失效，需要重新执行登录流程
-            await this.getSessionKey()
-            const json = {
-              encryptedData: res.detail.encryptedData,
-              iv: res.detail.iv,
-              sessionKey: this.sessionKey
-            }
-            this.decodeMobile(json)
-          }
-        })
+        const json = {
+          encryptedData: res.detail.encryptedData,
+          iv: res.detail.iv,
+          sessionKey: this.sessionKey
+        }
+        this.decodeMobile(json)
       }
     }
     decodeMobile (json) {
@@ -126,6 +112,7 @@
         title: '加载中'
       })
       XHR.decodeMobile(json).then(res => {
+        wx.hideLoading()
         if (res.statusCode === 200) {
           if (res.data.phoneNumber) {
             let formDate = {
@@ -147,17 +134,8 @@
     }
     async getSessionKey () {
       let res = await wepy.login()
-      XHR.getOpenId(res.code).then(res => {
-        if (res.statusCode === 200) {
-          let {data, status} = res.data
-          if (status === 0) {
-            wx.setStorageSync('sessionKey', data.session_key)
-            this.setData({
-              sessionKey: data.session_key
-            })
-          }
-        }
-      })
+      let ress = await XHR.getOpenId({code: res.code})
+      return ress.data.data.session_key
     }
     bindgetuserinfo(res) {
       if (res.detail.userInfo) {
@@ -185,20 +163,14 @@
     events = {
     }
 
-    onLoad(option) {
-      const sessionKey = wepy.getStorageSync('sessionKey')
-      if (!sessionKey) {
-        this.getSessionKey()
-      } else {
-        this.setData({
-          sessionKey
-        })
-        this.sessionKey = sessionKey
-      }
+    async onLoad(option) {
+      let sessionKey = await this.getSessionKey()
       this.setData({
-        userinfo: wepy.getStorageSync('userinfo')
+        userinfo: wepy.getStorageSync('userinfo'),
+        sessionKey
       })
       this.userinfo = wepy.getStorageSync('userinfo')
+      this.sessionKey = sessionKey
     }
   }
 </script>

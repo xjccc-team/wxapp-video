@@ -63,10 +63,24 @@
         sourceType: ['album', 'camera'],
         maxDuration: 15,
         camera: 'back',
-        success(res) {
+        success: (res) => {
           this.setData({videoSrc: res.tempFiles[0].tempFilePath})
           this.videoSrc = res.tempFiles[0].tempFilePath
+          this.upload(res.tempFiles[0].tempFilePath)
           console.log(res.tempFiles.tempFilePath)
+          console.log(res)
+        }
+      })
+    }
+    upload(tempFilePaths) {
+      wx.uploadFile({
+        url: 'http://49.233.63.162/video/upload', // 仅为示例，非真实的接口地址
+        filePath: tempFilePaths,
+        name: 'files',
+        formData: {
+          'type': 'video'
+        },
+        success: (res) => {
           console.log(res)
         }
       })
