@@ -1,0 +1,122 @@
+
+<template>
+ <view class="container">
+    <image class="bg" src="../images/bg.jpg" />
+    <view class="user-video">
+      <view class="video">
+        <video class="video" wx:if="{{videoSrc}}" src="{{videoSrc}}" controls></video>
+      </view>
+      <button type="default" hover-class="none" class="submit" @tap="choseVideo" plain >提交</button>
+   </view>
+    <view class="footer">
+      <view class="content">
+        <navigator url="/pages/list" class="btn" hover-class="none">加油广场</navigator>
+        <navigator url="/pages/share" class="btn" hover-class="none">去分享</navigator>
+        <navigator url="/pages/index" class="btn" hover-class="none">返回主页</navigator>
+      </view>
+      <button type="default" hover-class="none" class="to-video" @tap="choseVideo" plain ></button>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import testMixin from '../mixins/test'
+
+  export default class User extends wepy.page {
+    config = {
+      navigationBarTitleText: '我的视频'
+    }
+    components = {
+    }
+    mixins = [testMixin]
+    data = {
+      videoSrc: ''
+    }
+    computed = {
+      now () {
+        return +new Date()
+      }
+    }
+    methods = {
+    }
+  
+    events = {
+      'index-emit': (...args) => {
+        console.log(args)
+      }
+    }
+    choseVideo () {
+      wx.chooseVideo({
+        sourceType: ['album', 'camera'],
+        maxDuration: 30,
+        camera: 'front',
+        success: (res) => {
+          this.setData({videoSrc: res.tempFilePath})
+          this.videoSrc = res.tempFilePath
+        }
+      })
+    }
+    onLoad () {
+    }
+  }
+</script>
+<style lang="less">
+.container{
+  text-align: center;
+  position: relative;
+  .bg{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+  }
+  .footer{
+    position: fixed;
+    bottom: 30rpx;
+    display: flex;
+    left: 30rpx;
+    right: 30rpx;
+    .content{
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: space-between;
+      .btn{
+        flex:1;
+        font-size: 30rpx;
+        font-weight: bold;
+      }
+    }
+    .to-video{
+      width: 239rpx;
+      height: 84rpx;
+      background: url('http://www.wingstechnology.cn:8888/mpimage/luzhi.png') no-repeat;
+      background-size: contain;
+      border:none !important;
+    }
+  }
+  .user-video{
+    margin:30px auto;
+    width: 100%;
+    .video{
+      width: 100%;
+      height: 400rpx;
+    }
+    .submit{
+      width: 186rpx;
+      height: 66rpx;
+      background: url('http://www.wingstechnology.cn:8888/mpimage/btn-bg.png') no-repeat;
+      background-size: contain;
+      border:none !important;
+      line-height: 66rpx;
+      margin-top: 30rpx;
+      color: #981f29;
+    }
+  }
+}
+</style>

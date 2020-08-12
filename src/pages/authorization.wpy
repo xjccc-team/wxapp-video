@@ -3,7 +3,6 @@
   padding: 0 32rpx;
   text-align: center;
   position: relative;
-  color:#fff;
   .bg{
     flex:1;
     position: fixed;
@@ -15,28 +14,58 @@
     width: 100%;
     height: 100%;
   }
-  .banner{
-    margin:86rpx auto 0;
-    width: 499rpx;
-    height: 432rpx;
+  .logo{
+    width: 247rpx;
+    height: 92rpx;
+    position: fixed;
+    bottom: 40rpx;
   }
-  .des{
-    margin:60rpx auto;
-    display: block;
-    font-size: 40rpx;
+  .authorization{
+    .tip{
+      margin:255rpx auto 85rpx;
+      font-size: 30rpx;
+      display: block;
+      color: #fff;
+      line-height: 40rpx;
+    }
+    button{
+      width: 214rpx;
+      height: 76rpx;
+      background: url('http://www.wingstechnology.cn:8888/mpimage/login.png')no-repeat;
+      background-size: contain;
+      border:none !important;
+    }
   }
-  button{
-    margin-top: 20rpx;
+  .phone-wrap{
+    .tip{
+      margin:255rpx auto 35rpx;
+      font-size: 30rpx;
+      display: block;
+      color: #fff;
+      line-height: 55rpx;
+    }
+    button{
+      width: 260rpx;
+      height: 75rpx;
+      background: url('http://www.wingstechnology.cn:8888/mpimage/phone.png')no-repeat;
+      background-size: contain;
+      border:none !important;
+    }
   }
 }
 </style>
 <template>
   <view class="container">
    <image class="bg" src="../images/bg.jpg" />
-    <image class="banner" src="../images/banner.png" />
-    <button type="default" hover-class="none" open-type="getUserInfo" bindgetuserinfo="bindgetuserinfo">授权登陆</button>
-    <button type="default" hover-class="none" open-type="getPhoneNumber" plain bindgetphonenumber="gohome">手机号授权</button>
-    <text class="des">允许微信授权功能后，可体验更多功能</text>
+   <view class="authorization" wx:if="{{!userinfo.openId}}">
+     <text class="tip">允许小程序获取您的公开信息，可体验更多功能</text>
+     <button type="default" hover-class="none" open-type="getUserInfo" bindgetuserinfo="bindgetuserinfo"></button>
+   </view>
+  <view class="phone-wrap" wx:else>
+     <text class="tip">{{phoneText}}</text>
+     <button type="default" hover-class="none" open-type="getPhoneNumber" plain bindgetphonenumber="bindPhone"></button>
+   </view>
+   <image class="logo" src="http://www.wingstechnology.cn:8888/mpimage/logo.png" />
   </view>
 </template>
 
@@ -45,7 +74,7 @@
   import Toast from 'wepy-com-toast'
   import testMixin from '../mixins/test'
   import XHR from '../api/'
-  export default class Index extends wepy.page {
+  export default class Authorization extends wepy.page {
     config = {
       navigationBarTitleText: '授权'
     }
@@ -56,34 +85,75 @@
     mixins = [testMixin]
 
     data = {
-      option: {}
+      option: {},
+      phoneText: '允许小程序获取您微信绑定的手机号\n 用于五矿信托积分统计',
+      userInfo: {},
+      sessionKey: ''
     }
 
     computed = {
     }
 
     methods = {
-      gohome() {
-        wepy.switchTab({
-          url: '/pages/index'
-        })
-      }
+  
+    }
+    bindPhone(res) {
+      wx.checkSession({
+        success: (ress) => {
+          if (res.detail.phoneNumber) {
+            const json = {
+              sessionKey: this.sessionKey,
+              openId: this.openid
+            }
+            this.registerMobile(json)
+          }
+        },
+        fail: async () => {
+          // session_key 已经失效，需要重新执行登录流程
+          await this.getSessionKey()
+          const json = {
+            sessionKey: this.sessionKey,
+            openId: this.openid
+          }
+          this.registerMobile(json)
+        }
+      })
+    }
+    registerMobile (json) {
+      XHR.registerMobile(json).then(res => {
+        if (res.statusCode === 200) {
+          wx.reLaunch({
+            url: '/pages/index'
+          })
+        } else {
+          console.log('接口异常')
+        }
+      }).catch(e => {
+        console.log('接口异常')
+      })
+    }
+    async getSessionKey () {
+      let res = await wepy.login()
+      XHR.getOpenId(res.code).then(res => {
+        if (res.statusCode === 200) {
+          let {data, status} = res.data
+          if (status === 0) {
+            wx.setStorageSync('sessionKey', data.session_key)
+            this.setData({
+              sessionKey: data.session_key
+            })
+          }
+        }
+      })
     }
     bindgetuserinfo(res) {
       if (res.detail.userInfo) {
         this.toAuthorization(res.detail.userInfo)
-      } else {
-        this.showToast('很遗憾，您拒绝了微信授权，宝宝很伤心', function() {
-          setTimeout(() => {
-            wepy.switchTab({
-              url: '/pages/index'
-            })
-          }, 2e3)
-        })
       }
     }
     toAuthorization(json) {
-      json.openId = wepy.getStorageSync('openid') || '无'
+      json.openId = this.openid
+      json.nickname = json.nickName
       XHR.register(json).then(res => {
         if (res.statusCode === 200) {
           this.authorOk(json)
@@ -95,17 +165,27 @@
       })
     }
     authorOk(json) {
+      this.setData({userinfo: json})
       wepy.setStorageSync('userinfo', json)
       this.$parent.globalData.userInfo = json
-      // wepy.navigateTo({
-      //   url: `/pages/addPhone?type=${this.option.type}`
-      // })
     }
     events = {
     }
 
     onLoad(option) {
-      this.option = option
+      const sessionKey = wepy.getStorageSync('sessionKey')
+      if (!sessionKey) {
+        this.getSessionKey()
+      } else {
+        this.setData({
+          sessionKey
+        })
+        this.sessionKey = sessionKey
+      }
+      this.setData({
+        userinfo: wepy.getStorageSync('userinfo')
+      })
+      this.userinfo = wepy.getStorageSync('userinfo')
     }
   }
 </script>

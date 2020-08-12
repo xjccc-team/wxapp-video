@@ -1,0 +1,157 @@
+
+<template>
+ <view class="container">
+    <image class="bg" src="../images/bg.jpg" />
+    <scroll-view scroll-y class="video-list" bindscrolltolower="scrolltolower"	>
+      <view class="video-item">
+        <view class="video-box"></view>
+        <view class="prise" >880</view>
+      </view>
+      <view class="video-item">
+        <view class="video-box"></view>
+        <view class="prise" >880</view>
+      </view>
+      <view class="video-item">
+        <view class="video-box"></view>
+        <view class="prise" >880</view>
+      </view>
+      <view class="video-item">
+        <view class="video-box"></view>
+        <view class="prise" >880</view>
+      </view>
+      <view class="video-item">
+        <view class="video-box"></view>
+        <view class="prise" >880</view>
+      </view>
+      <view class="video-item">
+        <view class="video-box"></view>
+        <view class="prise" >880</view>
+      </view>
+      <view class="video-item">
+        <view class="video-box"></view>
+        <view class="prise" >880</view>
+      </view>
+      <view class="video-item">
+        <view class="video-box"></view>
+        <view class="prise" >880</view>
+      </view><view class="video-item">
+        <view class="video-box"></view>
+        <view class="prise" >880</view>
+      </view>
+      <view class="video-item">
+        <view class="video-box"></view>
+        <view class="prise" >880</view>
+      </view>
+    </scroll-view>
+    <view class="footer">
+      <navigator url="/pages/index" class="go-home" hover-class="none"></navigator>
+      <image class="des" src="../images/des.png" />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import testMixin from '../mixins/test'
+
+  export default class List extends wepy.page {
+    config = {
+      navigationBarTitleText: '加油广场'
+    }
+    components = {
+    }
+    mixins = [testMixin]
+    data = {
+    }
+    computed = {
+      now () {
+        return +new Date()
+      }
+    }
+
+    methods = {
+      scrolltolower() {
+  
+      }
+    }
+    events = {
+      'index-emit': (...args) => {
+        console.log(args)
+      }
+    }
+    onLoad () {
+    }
+  }
+</script>
+<style lang="less">
+.container{
+  text-align: center;
+  position: relative;
+  .bg{
+    flex:1;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+  }
+  .video-list{
+    height: 940rpx;
+    box-sizing: border-box;
+    padding: 19rpx 110rpx 0;
+    .video-item{
+      width: 50%;
+      float: left;
+      margin-top: 37rpx;
+      &:nth-child(odd){
+        padding-right: calc(50% - 216rpx);
+        box-sizing: border-box;
+      }
+      &:nth-child(even){
+        padding-left: calc(50% - 216rpx);
+        box-sizing: border-box;
+      }
+      .video-box{
+        width: 216rpx;
+        height: 211rpx;
+        background: url('http://www.wingstechnology.cn:8888/mpimage/video-bg.png') no-repeat;
+        background-size: contain;
+      }
+      .prise{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 31rpx;
+        margin-top: 21rpx;
+        height: 40rpx;
+        &::before{
+          content:'';
+          width: 50rpx;
+          height: 40rpx;
+          background: url('http://www.wingstechnology.cn:8888/mpimage/prise.png')no-repeat;
+          background-size: contain;
+          display: inline-flex;
+          margin-right: 18rpx;
+        }
+      }
+    }
+  }
+  .footer{
+    .go-home{
+      width: 186rpx;
+      height: 66rpx;
+      background: url('http://www.wingstechnology.cn:8888/mpimage/go-home.png') no-repeat;
+      background-size: contain;
+      border:none !important;
+       margin:62rpx auto 50rpx;
+    }
+    .des{
+      width: 253px;
+      height:20px;
+    }
+  }
+}
+</style>

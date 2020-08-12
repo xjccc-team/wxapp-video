@@ -28,6 +28,13 @@ class XHR {
       type: 'GET'
     })
   }
+  registerMobile (json) { // 手机号授权
+    return fetch({
+      url: `${fetch.URLS}/user/registerMobile`,
+      body: json,
+      type: 'POST'
+    })
+  }
 }
 
 export default new XHR()
