@@ -64,13 +64,13 @@
      margin:0 auto 40rpx;
      width: 410rpx;
      height: 81rpx;
-     background: url('http://www.wingstechnology.cn:8888/mpimage/jiayou.png') no-repeat;
+     background: url('http://www.wingstechnology.cn:8888/image/jiayou.png') no-repeat;
      background-size: contain;
   }
   .to-list{
     width: 410rpx;
      height: 81rpx;
-      background: url('http://www.wingstechnology.cn:8888/mpimage/guangchang.png') no-repeat;
+      background: url('http://www.wingstechnology.cn:8888/image/guangchang.png') no-repeat;
       background-size: contain;
   }
   .des{

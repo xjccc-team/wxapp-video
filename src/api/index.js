@@ -49,6 +49,27 @@ class XHR {
       type: 'POST'
     })
   }
+  videoInfo (json) { // 获取视频状态
+    return fetch({
+      url: `${fetch.URLS}/video/info`,
+      body: json,
+      type: 'GET'
+    })
+  }
+  videoList (json) { // 视频列表（审核通过的）
+    return fetch({
+      url: `${fetch.URLS}/video/list`,
+      body: json,
+      type: 'GET'
+    })
+  }
+  videoPraise (json) { // 点赞接口
+    return fetch({
+      url: `${fetch.URLS}/video/praise`,
+      body: json,
+      type: 'POST'
+    })
+  }
 }
 
 export default new XHR()

@@ -6,12 +6,12 @@
       <view class="video">
         <video class="video"  src="{{videoSrc}}" controls></video>
       </view>
-      <button type="default" hover-class="none" class="submit" @tap="choseVideo" plain >提交</button>
+      <button type="default" hover-class="none" class="submit" @tap="choseVideo" plain  wx:if="{{status==null}}">提交</button>
    </view>
     <view class="footer">
       <view class="content">
         <navigator url="/pages/list" class="btn" hover-class="none">加油广场</navigator>
-        <navigator url="/pages/share" class="btn" hover-class="none">去分享</navigator>
+        <navigator url="/pages/share" class="btn" hover-class="none" wx:if="{{videoSrc}}">去分享</navigator>
         <navigator url="/pages/index" class="btn" hover-class="none">返回主页</navigator>
       </view>
       <button type="default" hover-class="none" class="to-video" @tap="choseVideo" plain ></button>
@@ -22,7 +22,7 @@
 <script>
   import wepy from 'wepy'
   import testMixin from '../mixins/test'
-
+  import XHR from '../api/'
   export default class User extends wepy.page {
     config = {
       navigationBarTitleText: '我的视频'
@@ -31,7 +31,9 @@
     }
     mixins = [testMixin]
     data = {
-      videoSrc: ''
+      videoSrc: '',
+      status: 0,
+      refuseReason: ''
     }
     computed = {
       now () {
@@ -47,16 +49,6 @@
       }
     }
     choseVideo () {
-      // wx.chooseVideo({
-      //   sourceType: ['album', 'camera'],
-      //   maxDuration: 30,
-      //   camera: 'front',
-      //   success: (res) => {
-      //     console.log(res)
-      //     this.setData({videoSrc: res.tempFilePath})
-      //     this.videoSrc = res.tempFilePath
-      //   }
-      // })
       wx.chooseMedia({
         count: 1,
         mediaType: ['video'],
@@ -64,10 +56,7 @@
         maxDuration: 15,
         camera: 'back',
         success: (res) => {
-          this.setData({videoSrc: res.tempFiles[0].tempFilePath})
-          this.videoSrc = res.tempFiles[0].tempFilePath
           this.upload(res.tempFiles[0].tempFilePath)
-          console.log(res.tempFiles.tempFilePath)
           console.log(res)
         }
       })
@@ -81,11 +70,36 @@
           'type': 'video'
         },
         success: (res) => {
-          console.log(res)
+          let {data, status} = res.data
+          if (status === 0) {
+            console.log(res)
+            this.setData({videoSrc: data})
+            this.videoSrc = data
+            wx.showToast({title: '上传成功', icon: 'success', mask: true, duration: 2000})
+          }
+        }
+      })
+    }
+    getVideoInfo() {
+      XHR.videoInfo({
+        openId: this.$parent.globalData.openid
+      }).then(res => {
+        let {data, status} = res.data
+        if (status === 0) {
+          this.status = data.status
+          this.videoSrc = data.videoSrc
+          this.refuseReason = data.refuseReason
+          this.setData({
+            status: data.status,
+            videoSrc: data.videoSrc,
+            refuseReason: data.refuseReason
+          })
         }
       })
     }
     onLoad () {
+      console.log(this.$parent.globalData.openid)
+      this.getVideoInfo()
     }
   }
 </script>
