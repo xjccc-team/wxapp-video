@@ -5,9 +5,10 @@
     <scroll-view scroll-y class="video-list" @scrolltolower="scrolltolower"	>
       <view class="video-item" wx:for="{{videoLists}}" wx:key="code">
         <view class="video-box">
-           <video class="video"  src="{{item.videoSrc}}" controls></video>
+           <video class="video" object-fit="cover" poster="{{item.imageSrc}}" custom-cache="{{false}}" src="{{item.videoSrc}}" controls></video>
         </view>
-        <view class="prise" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
+        <view class="prise" wx:if="{{item.isPraise}}" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
+        <view class="no-prise" wx:else @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
       </view>
     </scroll-view>
     <view class="footer">
@@ -128,7 +129,8 @@
       .video-box{
         width: 216rpx;
         height: 211rpx;
-        background: url('http://www.wingstechnology.cn:8888/mpimage/video-bg.png') no-repeat;
+        background: url('https://www.wingstechnology.cn/mpimage/video-bg.png') no-repeat;
+        padding: 12rpx;
         background-size: contain;
         overflow: hidden;
         video{
@@ -136,7 +138,7 @@
           height: 100%;
         }
       }
-      .prise{
+      .prise,.no-prise{
         display: flex;
         align-items: center;
         justify-content: center;
@@ -147,7 +149,18 @@
           content:'';
           width: 50rpx;
           height: 40rpx;
-          background: url('http://www.wingstechnology.cn:8888/mpimage/prise.png')no-repeat;
+          background: url('https://www.wingstechnology.cn/mpimage/prise.png')no-repeat;
+          background-size: contain;
+          display: inline-flex;
+          margin-right: 18rpx;
+        }
+      }
+      .no-prise{
+        &::before{
+          content:'';
+          width: 50rpx;
+          height: 40rpx;
+          background: url('https://www.wingstechnology.cn/mpimage/no-prise.png')no-repeat;
           background-size: contain;
           display: inline-flex;
           margin-right: 18rpx;
@@ -159,7 +172,7 @@
     .go-home{
       width: 186rpx;
       height: 66rpx;
-      background: url('http://www.wingstechnology.cn:8888/mpimage/go-home.png') no-repeat;
+      background: url('https://www.wingstechnology.cn/mpimage/go-home.png') no-repeat;
       background-size: contain;
       border:none !important;
        margin:62rpx auto 50rpx;

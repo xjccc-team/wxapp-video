@@ -4,8 +4,10 @@
     <image class="bg" src="../images/bg.jpg" />
     <view class="user-video" wx:if="{{videoSrc}}">
       <view class="video">
-        <video class="video"  src="{{videoSrc}}" controls></video>
+        <video class="video"  custom-cache="{{false}}" object-fit="cover" src="{{videoSrc}}" poster="{{imageSrc}}" controls></video>
       </view>
+      <div class="des" wx:if="{{status=='0'}}">审核中</div>
+      <div class="des" wx:if="{{status=='2'}}">{{refuseReason}}</div>
       <button type="default" hover-class="none" class="submit" @tap="choseVideo" plain  wx:if="{{status==null}}">提交</button>
    </view>
     <view class="footer">
@@ -32,6 +34,7 @@
     mixins = [testMixin]
     data = {
       videoSrc: '',
+      imageSrc: '',
       status: 0,
       refuseReason: ''
     }
@@ -63,7 +66,7 @@
     }
     upload(tempFilePaths) {
       wx.uploadFile({
-        url: 'http://49.233.63.162/video/upload', // 仅为示例，非真实的接口地址
+        url: 'https://www.wingstechnology.cn/video/upload', // 仅为示例，非真实的接口地址
         filePath: tempFilePaths,
         name: 'files',
         formData: {
@@ -85,15 +88,12 @@
         openId: this.$parent.globalData.openid
       }).then(res => {
         let {data, status} = res.data
-        if (status === 0) {
+        if (status === 0 && data) {
           this.status = data.status
           this.videoSrc = data.videoSrc
+          this.imageSrc = data.imageSrc
           this.refuseReason = data.refuseReason
-          this.setData({
-            status: data.status,
-            videoSrc: data.videoSrc,
-            refuseReason: data.refuseReason
-          })
+          this.$apply()
         }
       })
     }
@@ -137,7 +137,7 @@
     .to-video{
       width: 239rpx;
       height: 84rpx;
-      background: url('http://www.wingstechnology.cn:8888/mpimage/luzhi.png') no-repeat;
+      background: url('https://www.wingstechnology.cn/mpimage/luzhi.png') no-repeat;
       background-size: contain;
       border:none !important;
     }
@@ -145,14 +145,23 @@
   .user-video{
     margin:30px auto;
     width: 100%;
+    text-align: center;
+    padding: 0 30rpx;
+    box-sizing: border-box;
     .video{
       width: 100%;
       height: 400rpx;
+      margin-bottom: 30rpx;
+    }
+    .des{
+      font-size: 32rpx;
+      font-weight: bold;
+      color: #fff;
     }
     .submit{
       width: 186rpx;
       height: 66rpx;
-      background: url('http://www.wingstechnology.cn:8888/mpimage/btn-bg.png') no-repeat;
+      background: url('https://www.wingstechnology.cn/mpimage/btn-bg.png') no-repeat;
       background-size: contain;
       border:none !important;
       line-height: 66rpx;

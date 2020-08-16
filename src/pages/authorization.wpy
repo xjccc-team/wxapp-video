@@ -31,7 +31,7 @@
     button{
       width: 214rpx;
       height: 76rpx;
-      background: url('http://www.wingstechnology.cn:8888/mpimage/login.png')no-repeat;
+      background: url('https://www.wingstechnology.cn/mpimage/login.png')no-repeat;
       background-size: contain;
       border:none !important;
     }
@@ -47,7 +47,7 @@
     button{
       width: 260rpx;
       height: 75rpx;
-      background: url('http://www.wingstechnology.cn:8888/mpimage/phone.png')no-repeat;
+      background: url('https://www.wingstechnology.cn/mpimage/phone.png')no-repeat;
       background-size: contain;
       border:none !important;
     }
@@ -65,7 +65,7 @@
      <text class="tip">{{phoneText}}</text>
      <button type="default" hover-class="none" open-type="getPhoneNumber" plain bindgetphonenumber="bindPhone"></button>
    </view>
-   <image class="logo" src="http://www.wingstechnology.cn:8888/mpimage/logo.png" />
+   <image class="logo" src="https://www.wingstechnology.cn/mpimage/logo.png" />
   </view>
 </template>
 

@@ -1,7 +1,14 @@
 
 <template>
  <view class="container">
-     <image class="bg" src="../images/bg.jpg" />
+   <div>
+    <image class="bg" src="../images/bg.jpg" />
+     <image class="title" src="../images/share-title.png" />
+     <image class="videoImg" src="../images/video.jpg" />
+     <image class="code" src="../images/code.jpg" />
+     <text class="des">和我一起，为五矿信托十周年打Call！</text>
+   </div>
+     <button type="default" class="upload-img" plain>保存图片</button>
   </view>
 </template>
 
@@ -11,7 +18,7 @@
 
   export default class Share extends wepy.page {
     config = {
-      navigationBarTitleText: '加油广场'
+      navigationBarTitleText: '分享',
     }
     components = {
     }
@@ -37,7 +44,6 @@
 </script>
 <style lang="less">
 .container{
-  padding: 0 32rpx;
   text-align: center;
   position: relative;
   .bg{
@@ -50,6 +56,37 @@
     z-index: -1;
     width: 100%;
     height: 100%;
+  }
+  .title{
+    margin:160rpx auto 66rpx;
+    width: 501rpx;
+    height: 47rpx;
+  }
+  .videoImg{
+    width: 100%;
+    height: 540rpx;
+  }
+  .code{
+    width:246rpx ;
+    height: 246rpx;
+    margin-top: 60rpx;
+    border-radius: 50%;
+  }
+  .des{
+    display: block;
+    font-size: 22rpx;
+    line-height: 30rpx;
+    margin-top: 30rpx;
+  }
+  .upload-img{
+    position: fixed;
+    top: 0;
+    right: 0;
+    border:none !important;
+    color:#fff !important;
+    // width: 60px;
+    // height: 20px;
+    // text-align: center;
   }
 }
 </style>
