@@ -50,7 +50,7 @@
             openId: this.$parent.globalData.openid,
             videoRecordCode: item.code
           }).then(res => {
-            let {message, status} = res
+            let {message, status} = res.data
             if (status === 0) {
               this.videoLists[index].praise++
               this.videoLists[index].isPraise = true
