@@ -2,10 +2,10 @@
 <template>
  <view class="container">
    <div>
-    <image class="bg" src="../images/bg.jpg" />
+    <image class="bg" src="https://www.wingstechnology.cn/mpimage/bg.jpg" />
      <image class="title" src="../images/share-title.png" />
      <image class="videoImg" src="../images/video.jpg" />
-     <image class="code" src="../images/code.jpg" />
+     <image class="code" src="../images/code.png" />
      <text class="des">和我一起，为五矿信托十周年打Call！</text>
    </div>
      <button type="default" class="upload-img" plain>保存图片</button>
@@ -18,7 +18,7 @@
 
   export default class Share extends wepy.page {
     config = {
-      navigationBarTitleText: '分享',
+      navigationBarTitleText: '分享'
     }
     components = {
     }
