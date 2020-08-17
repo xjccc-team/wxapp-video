@@ -58,7 +58,7 @@
         count: 1,
         mediaType: ['video'],
         sourceType: ['album', 'camera'],
-        maxDuration: 15,
+        maxDuration: 12,
         camera: 'back',
         success: (res) => {
           this.videoSrc = res.tempFiles[0].tempFilePath
