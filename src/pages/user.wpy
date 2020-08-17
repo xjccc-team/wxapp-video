@@ -8,7 +8,8 @@
       </view>
       <div class="des" wx:if="{{status=='0'}}">审核中</div>
       <div class="des" wx:if="{{status=='2'}}">{{refuseReason}}</div>
-      <button type="default" hover-class="none" class="submit" @tap="choseVideo" plain  wx:if="{{status==null}}">提交</button>
+      <button type="default" hover-class="none" class="submit" @tap="uploadSubmit" plain  wx:if="{{status==null}}">提交</button>
+      <button type="default" hover-class="none" class="submit" @tap="downloadImg" plain  wx:if="{{status==1}}">保存</button>
    </view>
     <view class="footer">
       <view class="content">
@@ -16,7 +17,7 @@
         <navigator url="/pages/share" class="btn" hover-class="none" wx:if="{{videoSrc}}">去分享</navigator>
         <navigator url="/pages/index" class="btn" hover-class="none">返回主页</navigator>
       </view>
-      <button type="default" hover-class="none" class="to-video" @tap="choseVideo" plain ></button>
+      <button type="default" hover-class="none" disabled="{{disabledStatus}}" class="to-video" @tap="choseVideo" plain ></button>
     </view>
   </view>
 </template>
@@ -36,7 +37,8 @@
       videoSrc: '',
       imageSrc: '',
       status: 0,
-      refuseReason: ''
+      refuseReason: '',
+      disabledStatus: false
     }
     computed = {
       now () {
@@ -59,15 +61,16 @@
         maxDuration: 15,
         camera: 'back',
         success: (res) => {
-          this.upload(res.tempFiles[0].tempFilePath)
+          this.videoSrc = res.tempFiles[0].tempFilePath
+          this.$apply()
           console.log(res)
         }
       })
     }
-    upload(tempFilePaths) {
+    uploadSubmit() {
       wx.uploadFile({
         url: 'https://www.wingstechnology.cn/video/upload', // 仅为示例，非真实的接口地址
-        filePath: tempFilePaths,
+        filePath: this.videoSrc,
         name: 'files',
         formData: {
           'type': 'video'
@@ -75,11 +78,39 @@
         success: (res) => {
           let {data, status} = res.data
           if (status === 0) {
-            console.log(res)
-            this.setData({videoSrc: data})
             this.videoSrc = data
+            this.status = 0
+            this.disabledStatus = true
+            this.$apply()
             wx.showToast({title: '上传成功', icon: 'success', mask: true, duration: 2000})
           }
+        }
+      })
+    }
+    downloadImg() {
+      wx.showLoading({
+        title: '下载中'
+      })
+      const time = +new Date()
+      wx.downloadFile({
+        url: `${this.videoSrc}?time=${time}`, // 仅为示例，并非真实的资源
+        success: (res) => {
+          if (res.statusCode === 200) {
+            this.saveVideo(res.tempFilePath)
+          }
+        }
+      })
+    }
+    saveVideo(filePath) {
+      wx.saveVideoToPhotosAlbum({
+        filePath: filePath,
+        success: res => {
+          wx.hideLoading()
+          wx.showToast({title: '下载成功', icon: 'none', mask: true, duration: 1500})
+        },
+        fail: res => {
+          wx.hideLoading()
+          console.log(res)
         }
       })
     }
@@ -93,6 +124,7 @@
           this.videoSrc = data.videoSrc
           this.imageSrc = data.imageSrc
           this.refuseReason = data.refuseReason
+          this.disabledStatus = true
           this.$apply()
         }
       })
@@ -140,6 +172,9 @@
       background: url('https://www.wingstechnology.cn/mpimage/luzhi.png') no-repeat;
       background-size: contain;
       border:none !important;
+    }
+    .to-video[plain][disabled]{
+      opacity: 0.4;
     }
   }
   .user-video{

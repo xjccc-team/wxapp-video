@@ -132,4 +132,13 @@ page{
   align-items: center;
   box-sizing: border-box;
 }
+@font-face {
+  font-family: 'video';  /* project id 2010712 */
+  src: url('//at.alicdn.com/t/font_2010712_hiwhuabsuhl.eot');
+  src: url('//at.alicdn.com/t/font_2010712_hiwhuabsuhl.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_2010712_hiwhuabsuhl.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_2010712_hiwhuabsuhl.woff') format('woff'),
+  url('//at.alicdn.com/t/font_2010712_hiwhuabsuhl.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_2010712_hiwhuabsuhl.svg#video') format('svg');
+}
 </style>
