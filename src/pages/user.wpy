@@ -15,7 +15,7 @@
       <view class="content">
         <navigator url="/pages/list" class="btn" hover-class="none">加油广场</navigator>
         <navigator url="/pages/share" class="btn" hover-class="none" wx:if="{{videoSrc}}">去分享</navigator>
-        <navigator url="/pages/index" class="btn" hover-class="none">返回主页</navigator>
+        <navigator open-type="navigateBack" delta url="/pages/index" class="btn" hover-class="none">返回主页</navigator>
       </view>
       <button type="default" hover-class="none" disabled="{{disabledStatus}}" class="to-video" @tap="choseVideo" plain ></button>
     </view>

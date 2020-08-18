@@ -84,9 +84,6 @@
     right: 0;
     border:none !important;
     color:#fff !important;
-    // width: 60px;
-    // height: 20px;
-    // text-align: center;
   }
 }
 </style>

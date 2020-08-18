@@ -13,7 +13,7 @@
       </view>
     </scroll-view>
     <view class="footer">
-      <navigator url="/pages/index" class="go-home" hover-class="none"></navigator>
+      <view @tap="toHome" url="/pages/index" class="go-home" ></view>
       <image class="des" src="https://www.wingstechnology.cn/mpimage/descript.png" />
     </view>
   </view>
@@ -33,7 +33,8 @@
     data = {
       page: 1,
       videoLists: [],
-      finish: false
+      finish: false,
+      pagesIndex: 0
     }
     computed = {
       now () {
@@ -63,12 +64,16 @@
         }
       }
     }
+    toHome() {
+      wx.navigateBack({
+        delta: this.pagesIndex
+      })
+    }
     scrolltolower() {
       if (!this.finish) {
         this.getVideoList()
       }
     }
-  
     getVideoList() {
       XHR.videoList({
         openId: this.$parent.globalData.openid,
@@ -81,7 +86,7 @@
             this.finish = true
           }
           this.page++
-          this.videoLists = data
+          this.videoLists = [...this.videoLists, ...data]
           this.$apply()
         }
       })
@@ -92,6 +97,9 @@
       }
     }
     onLoad () {
+      let pages = getCurrentPages()
+      this.pagesIndex = pages.length - 1
+      this.$apply()
       this.getVideoList()
     }
   }
