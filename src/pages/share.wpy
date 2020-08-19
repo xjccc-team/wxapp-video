@@ -1,14 +1,17 @@
 
 <template>
  <view class="container">
-   <div>
+   <!-- <div>
     <image class="bg" src="https://www.wingstechnology.cn/mpimage/bg.jpg" />
      <image class="title" src="../images/share-title.png" />
      <image class="videoImg" src="../images/video.jpg" />
      <image class="code" src="../images/code.png" />
      <text class="des">和我一起，为五矿信托十周年打Call！</text>
-   </div>
-     <button type="default" class="upload-img" plain>保存图片</button>
+   </div> -->
+   <poster id="poster" config="{{posterConfig}}" @success="onPosterSuccess" @fail="onPosterFail">
+      <button>点击生成海报</button>
+  </poster>
+     <!-- <button type="default" class="upload-img" plain>保存图片</button> -->
   </view>
 </template>
 
@@ -18,12 +21,30 @@
 
   export default class Share extends wepy.page {
     config = {
-      navigationBarTitleText: '分享'
+      navigationBarTitleText: '分享',
+      'usingComponents': {
+        'poster': '../components/wx-canvas-poster/poster'
+      }
     }
     components = {
     }
     mixins = [testMixin]
     data = {
+      posterConfig: {
+        width: 0,
+        height: 0,
+        debug: false,
+        images: [
+          {
+            x: 0,
+            y: 0,
+            url: 'https://www.wingstechnology.cn/mpimage/bg.jpg',
+            width: 600,
+            height: 600,
+            zIndex: 1
+          }
+        ]
+      }
     }
     computed = {
       now () {
@@ -38,7 +59,15 @@
         console.log(args)
       }
     }
+    onPosterSuccess() {
+  
+    }
+    onPosterFail() {
+  
+    }
     onLoad () {
+      this.posterConfig.width = wepy.getSystemInfo.windowWidth
+      this.posterConfig.height = wepy.getSystemInfo.windowHeight
     }
   }
 </script>
