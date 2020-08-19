@@ -2,7 +2,7 @@
 <template>
  <view class="container">
     <image class="bg" src="https://www.wingstechnology.cn/mpimage/bg.jpg" />
-    <image class="banner" src="../images/banner.png" />
+    <image class="banner" src="https://www.wingstechnology.cn/mpimage/banner.png" />
     <navigator url="/pages/user" class="to-user" hover-class="none"></navigator>
     <navigator url="/pages/list" class="to-list" hover-class="none"></navigator>
     <image class="des" src="https://www.wingstechnology.cn/mpimage/descript.png" />
@@ -27,7 +27,13 @@
         return +new Date()
       }
     }
-
+    onShareAppMessage(res) {
+      return {
+        title: '让我们一起为五矿加油',
+        // imageUrl: 'https://www.wingstechnology.cn/mpimage/banner.jpg',
+        path: '/pages/index'
+      }
+    }
     methods = {
     }
     events = {

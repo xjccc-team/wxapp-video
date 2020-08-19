@@ -1,17 +1,8 @@
 
 <template>
  <view class="container">
-   <!-- <div>
-    <image class="bg" src="https://www.wingstechnology.cn/mpimage/bg.jpg" />
-     <image class="title" src="../images/share-title.png" />
-     <image class="videoImg" src="../images/video.jpg" />
-     <image class="code" src="../images/code.png" />
-     <text class="des">和我一起，为五矿信托十周年打Call！</text>
-   </div> -->
-   <poster id="poster" config="{{posterConfig}}" @success="onPosterSuccess" @fail="onPosterFail">
-      <button>点击生成海报</button>
-  </poster>
-     <!-- <button type="default" class="upload-img" plain>保存图片</button> -->
+   <canvas class="canvas" type="2d" style='width:{{windowW}}px;height:{{windowH}}px' id="firstCanvas"></canvas>
+   <button type="default" class="upload-img" plain>保存图片</button>
   </view>
 </template>
 
@@ -21,30 +12,14 @@
 
   export default class Share extends wepy.page {
     config = {
-      navigationBarTitleText: '分享',
-      'usingComponents': {
-        'poster': '../components/wx-canvas-poster/poster'
-      }
+      navigationBarTitleText: '分享'
     }
     components = {
     }
     mixins = [testMixin]
     data = {
-      posterConfig: {
-        width: 0,
-        height: 0,
-        debug: false,
-        images: [
-          {
-            x: 0,
-            y: 0,
-            url: 'https://www.wingstechnology.cn/mpimage/bg.jpg',
-            width: 600,
-            height: 600,
-            zIndex: 1
-          }
-        ]
-      }
+      windowW: 240,
+      windowH: 240
     }
     computed = {
       now () {
@@ -59,15 +34,38 @@
         console.log(args)
       }
     }
-    onPosterSuccess() {
-  
-    }
-    onPosterFail() {
-  
+    onReady() {
+      const query = wx.createSelectorQuery()
+      query.select('#firstCanvas')
+          .fields({ node: true, size: true })
+          .exec((res) => {
+            const canvas = res[0].node
+            const ctx = canvas.getContext('2d')
+            const dpr = wx.getSystemInfoSync().pixelRatio
+            canvas.width = res[0].width * dpr
+            canvas.height = res[0].height * dpr
+            ctx.scale(dpr, dpr)
+            const headerImg = canvas.createImage()
+            headerImg.src = 'https://www.wingstechnology.cn/mpimage/bg.jpg' // 微信请求返回头像
+            headerImg.onload = (res) => {
+              ctx.drawImage(headerImg, 0, 0, this.windowW, this.windowH)
+              const Img2 = canvas.createImage()
+              Img2.src = 'https://www.wingstechnology.cn/mpimage/share-title.png' // 微信请求返回头像
+              const Img3 = canvas.createImage()
+              Img3.src = 'https://www.wingstechnology.cn/mpimage/share-block.png' // 微信请求返回头像
+              Img2.onload = (res) => {
+                ctx.drawImage(Img2, this.windowW / 2 - 131, 68, 262, 123)
+              }
+              Img3.onload = (res) => {
+                ctx.drawImage(Img3, this.windowW / 2 - 156, 205, 313, 230)
+              }
+            }
+          })
     }
     onLoad () {
-      this.posterConfig.width = wepy.getSystemInfo.windowWidth
-      this.posterConfig.height = wepy.getSystemInfo.windowHeight
+      this.windowW = wepy.getSystemInfoSync().windowWidth
+      this.windowH = wepy.getSystemInfoSync().windowHeight
+      this.$apply()
     }
   }
 </script>

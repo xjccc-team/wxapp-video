@@ -63,7 +63,6 @@
         success: (res) => {
           this.videoSrc = res.tempFiles[0].tempFilePath
           this.$apply()
-          console.log(res)
         }
       })
     }
@@ -73,16 +72,20 @@
         filePath: this.videoSrc,
         name: 'files',
         formData: {
-          'type': 'video'
+          'type': 'video',
+          openId: this.$parent.globalData.openid,
+          duration: 12
         },
         success: (res) => {
-          let {data, status} = res.data
+          let {status} = res.data
           if (status === 0) {
-            this.videoSrc = data
             this.status = 0
             this.disabledStatus = true
             this.$apply()
-            wx.showToast({title: '上传成功', icon: 'success', mask: true, duration: 2000})
+            wx.showToast({title: '上传完成，请等待审核', icon: 'success', mask: true, duration: 2000})
+            setTimeout(() => {
+              this.getVideoInfo()
+            }, 3e3)
           }
         }
       })

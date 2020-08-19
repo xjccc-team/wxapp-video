@@ -97,6 +97,7 @@
       }
     }
     onLoad () {
+      // eslint-disable-next-line no-undef
       let pages = getCurrentPages()
       this.pagesIndex = pages.length - 1
       this.$apply()
