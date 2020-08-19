@@ -1,10 +1,10 @@
 
 <template>
  <view class="container">
-    <image class="bg" src="https://www.wingstechnology.cn/mpimage/bg.jpg" />
+    <image class="bg" src="../images/bg.jpg" />
     <view class="user-video" wx:if="{{videoSrc}}">
       <view class="video">
-        <video class="video"  custom-cache="{{false}}" object-fit="cover" src="{{videoSrc}}" poster="{{imageSrc}}" controls></video>
+        <video class="video"  custom-cache="{{false}}"  src="{{videoSrc}}" poster="{{imageSrc}}" controls></video>
       </view>
       <div class="des" wx:if="{{status=='0'}}">审核中</div>
       <div class="des" wx:if="{{status=='2'}}">{{refuseReason}}</div>
@@ -36,7 +36,7 @@
     data = {
       videoSrc: '',
       imageSrc: '',
-      status: 0,
+      status: null,
       refuseReason: '',
       disabledStatus: false
     }
@@ -61,14 +61,26 @@
         maxDuration: 12,
         camera: 'back',
         success: (res) => {
-          this.videoSrc = res.tempFiles[0].tempFilePath
-          this.$apply()
+          console.log(res)
+          if (res.errMsg === 'chooseMedia:ok') {
+            if (res.tempFiles[0].duration > 12) {
+              wx.showToast({ title: '视频超过12s请重新上传', icon: 'none' })
+            } else {
+              this.videoSrc = res.tempFiles[0].tempFilePath
+              this.$apply()
+            }
+          } else {
+            wx.showToast({ title: '上传失败', icon: 'none' })
+          }
         }
       })
     }
     uploadSubmit() {
+      wx.showLoading({
+        title: '上传中，请稍后'
+      })
       wx.uploadFile({
-        url: 'https://www.wingstechnology.cn/video/upload', // 仅为示例，非真实的接口地址
+        url: 'https://www.wingstechnology.cn/api-server/video/upload', // 仅为示例，非真实的接口地址
         filePath: this.videoSrc,
         name: 'files',
         formData: {
@@ -78,14 +90,14 @@
         },
         success: (res) => {
           let {status} = res.data
-          if (status === 0) {
+          wx.hideLoading()
+          if (status === 3002) {
             this.status = 0
             this.disabledStatus = true
             this.$apply()
             wx.showToast({title: '上传完成，请等待审核', icon: 'success', mask: true, duration: 2000})
-            setTimeout(() => {
-              this.getVideoInfo()
-            }, 3e3)
+          } else {
+            wx.showToast({ title: res.data.message, icon: 'none' })
           }
         }
       })

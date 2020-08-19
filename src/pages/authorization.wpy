@@ -56,7 +56,7 @@
 </style>
 <template>
   <view class="container">
-   <image class="bg" src="https://www.wingstechnology.cn/mpimage/bg.jpg" />
+   <image class="bg" src="../images/bg.jpg" />
    <view class="authorization" wx:if="{{!userinfo.openId}}">
      <text class="tip">允许小程序获取您的公开信息，可体验更多功能</text>
      <button type="default" hover-class="none" open-type="getUserInfo" bindgetuserinfo="bindgetuserinfo"></button>
@@ -112,7 +112,6 @@
         title: '加载中'
       })
       XHR.decodeMobile(json).then(res => {
-        wx.hideLoading()
         if (res.statusCode === 200) {
           if (res.data.phoneNumber) {
             let formDate = {

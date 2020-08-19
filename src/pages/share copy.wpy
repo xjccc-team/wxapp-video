@@ -1,8 +1,8 @@
 
 <template>
  <view class="container">
-   <canvas class="canvas" type="2d"  style='width:{{windowW}}px;height:{{windowH}}px' id="firstCanvas"></canvas>
-  <!-- <button type="default" class="upload-img" plain @tap="saveImage">保存图片</button> -->
+   <canvas class="canvas" type="2d" style='width:{{windowW}}px;height:{{windowH}}px' id="firstCanvas"></canvas>
+    <button type="default" class="upload-img" plain @tap="saveImage">保存图片</button>
   </view>
 </template>
 
@@ -18,8 +18,8 @@
     }
     mixins = [testMixin]
     data = {
-      windowW: 375,
-      windowH: 605,
+      windowW: 240,
+      windowH: 240,
       canvasImg: ''
     }
     computed = {
@@ -45,7 +45,6 @@
             const dpr = wx.getSystemInfoSync().pixelRatio
             canvas.width = res[0].width * dpr
             canvas.height = res[0].height * dpr
-            console.log(dpr, dpr)
             ctx.scale(dpr, dpr)
             const headerImg = canvas.createImage()
             headerImg.src = '../images/bg.jpg'
@@ -66,6 +65,10 @@
                     ctx.arc(this.windowW / 2 - 10, 300, 50, 0, 2 * Math.PI)
                     ctx.clip()
                     ctx.drawImage(Img6, this.windowW / 2 - 60, 250, 100, 100)
+                    let that = this
+                    setTimeout(function() {
+                      that.daochu(canvas)
+                    }, 200)
                   }
                 }
                 const Img4 = canvas.createImage()
@@ -79,10 +82,6 @@
                   }
                 }
               }
-              let that = this
-              setTimeout(function() {
-                that.daochu(canvas)
-              }, 200)
             }
           })
     }

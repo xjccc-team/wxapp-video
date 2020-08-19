@@ -1,7 +1,7 @@
 
 <template>
  <view class="container">
-    <image class="bg" src="https://www.wingstechnology.cn/mpimage/bg.jpg" />
+    <image class="bg" src="../images/bg.jpg" />
     <image class="banner" src="https://www.wingstechnology.cn/mpimage/banner.png" />
     <navigator url="/pages/user" class="to-user" hover-class="none"></navigator>
     <navigator url="/pages/list" class="to-list" hover-class="none"></navigator>

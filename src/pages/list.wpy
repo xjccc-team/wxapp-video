@@ -1,12 +1,12 @@
 
 <template>
  <view class="container">
-    <image class="bg" src="https://www.wingstechnology.cn/mpimage/bg.jpg" />
+    <image class="bg" src="../images/bg.jpg" />
     <scroll-view scroll-y class="video-list" @scrolltolower="scrolltolower"	>
       <view  wx:if="{{!videoLists.length}}" class="no-data">暂无数据</view>
       <view class="video-item" wx:for="{{videoLists}}" wx:key="code">
         <view class="video-box">
-           <video class="video" object-fit="cover" poster="{{item.imageSrc}}" custom-cache="{{false}}" src="{{item.videoSrc}}" controls></video>
+           <video class="video"  object-fit="fill" poster="{{item.imageSrc}}" custom-cache="{{false}}" src="{{item.videoSrc}}" controls></video>
         </view>
         <view class="prise" wx:if="{{item.isPraise}}" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
         <view class="no-prise" wx:else @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
@@ -75,14 +75,18 @@
       }
     }
     getVideoList() {
+      wx.showLoading({
+        title: '加载中'
+      })
       XHR.videoList({
         openId: this.$parent.globalData.openid,
         pageIndex: this.page,
-        pageSize: 6
+        pageSize: 8
       }).then(res => {
         let {data, status} = res.data
+        wx.hideLoading()
         if (status === 0) {
-          if (data.length < 6) {
+          if (data.length < 8) {
             this.finish = true
           }
           this.page++
@@ -157,6 +161,7 @@
         height: 211rpx;
         background: url('https://www.wingstechnology.cn/mpimage/video-bg.png') no-repeat;
         padding: 12rpx;
+        box-sizing: border-box;
         background-size: contain;
         overflow: hidden;
         video{
