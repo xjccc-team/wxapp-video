@@ -42,6 +42,9 @@
       query.select('#myCanvas')
           .fields({ node: true, size: true })
           .exec(async (res) => {
+            wx.showLoading({
+              title: '加载中'
+            })
             const canvas = this.canvas = res[0].node
             const ctx = canvas.getContext('2d')
             const dpr = wx.getSystemInfoSync().pixelRatio
@@ -52,6 +55,7 @@
             let that = this
             setTimeout(function() {
               that.daochu(canvas)
+              wx.hideLoading()
             }, 200)
           })
     }

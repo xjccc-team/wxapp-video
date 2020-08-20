@@ -89,15 +89,16 @@
           duration: 12
         },
         success: (res) => {
-          let {status} = res.data
+          console.log(JSON.parse(res.data))
+          const data = JSON.parse(res.data)
           wx.hideLoading()
-          if (status === 3002) {
+          if (data.status === 3002) {
             this.status = 0
             this.disabledStatus = true
             this.$apply()
             wx.showToast({title: '上传完成，请等待审核', icon: 'success', mask: true, duration: 2000})
           } else {
-            wx.showToast({ title: res.data.message, icon: 'none' })
+            wx.showToast({ title: data.message, icon: 'none' })
           }
         }
       })

@@ -6,7 +6,7 @@
       <view  wx:if="{{!videoLists.length}}" class="no-data">暂无数据</view>
       <view class="video-item" wx:for="{{videoLists}}" wx:key="code">
         <view class="video-box">
-           <video class="video"  object-fit="fill" poster="{{item.imageSrc}}" custom-cache="{{false}}" src="{{item.videoSrc}}" controls></video>
+           <video class="video"  poster="{{item.imageSrc}}" custom-cache="{{false}}" src="{{item.videoSrc}}" controls></video>
         </view>
         <view class="prise" wx:if="{{item.isPraise}}" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
         <view class="no-prise" wx:else @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
