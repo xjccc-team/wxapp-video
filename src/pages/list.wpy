@@ -6,7 +6,9 @@
       <view  wx:if="{{!videoLists.length}}" class="no-data">暂无数据</view>
       <view class="video-item" wx:for="{{videoLists}}" wx:key="code">
         <view class="video-box">
-           <video class="video"  poster="{{item.imageSrc}}" custom-cache="{{false}}" src="{{item.videoSrc}}" controls></video>
+          <video class="video" enable-auto-rotation="{{true}}" initial-time="0"  wx:if='{{index==videoIndex}}' id='video{{index}}'  autoplay='{{true}}' show-center-play-btn="{{false}}" poster="{{item.imageSrc}}" src="{{item.videoSrc}}" controls></video>
+          <image class='video-img' wx:if='{{index!=videoIndex}}'  src='{{item.imageSrc}}'></image>
+          <view class="play" id="{{index}}" @tap="videoPlay({{index}})">sd</view>
         </view>
         <view class="prise" wx:if="{{item.isPraise}}" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
         <view class="no-prise" wx:else @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
@@ -34,14 +36,15 @@
       page: 1,
       videoLists: [],
       finish: false,
-      pagesIndex: 0
+      pagesIndex: 0,
+      videoIndex: null
     }
     computed = {
       now () {
         return +new Date()
       }
     }
-
+  
     methods = {
       toPrise(item, index) {
         if (item.isPraise) {
@@ -62,7 +65,29 @@
             }
           })
         }
+      },
+      // videoPlay(index) {
+      //   if (!this.videoIndex) { // 没有播放时播放视频
+      //     this.videoIndex = index
+      //     const videoContext = wx.createVideoContext('video' + index, this.$wx)
+      //     videoContext.requestFullScreen({ direction: 0 })
+      //   } else {
+      //     const videoContextPrev = wx.createVideoContext('video' + this.videoIndex)
+      //     videoContextPrev.exitFullScreen()
+      //     videoContextPrev.stop()
+      //     this.videoIndex = index
+      //     const videoContext = wx.createVideoContext('video' + index, this.$wx)
+      //     videoContext.requestFullScreen({ direction: 0 })
+      //   }
+      // },
+      fullScreen(e) {
+        console.log(e)
       }
+    }
+    videoPlay(e) {
+      this.videoIndex = e.target.id
+      const videoContext = wx.createVideoContext('video' + this.videoIndex, this.$wx)
+      videoContext.requestFullScreen()
     }
     toHome() {
       wx.navigateBack({
@@ -164,9 +189,22 @@
         box-sizing: border-box;
         background-size: contain;
         overflow: hidden;
+        position: relative;
         video{
           width: 100%;
           height: 100%;
+        }
+        .video-img{
+          width: 100%;
+          height: 100%;
+        }
+        .play{
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          width: 20px;
+          text-align: center;
+          transform: translate(-50%,-50%);
         }
       }
       .prise,.no-prise{

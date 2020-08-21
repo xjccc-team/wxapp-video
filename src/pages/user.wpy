@@ -4,7 +4,10 @@
     <image class="bg" src="../images/bg.jpg" />
     <view class="user-video" wx:if="{{videoSrc}}">
       <view class="video">
-        <video class="video" style="height:{{videoHeight}}px" object-fit="cover" play-btn-position="center" bindloadedmetadata="videometa" src="{{videoSrc}}" poster="{{imageSrc}}" controls></video>
+        <video class="video" style="height:{{videoHeight}}px" 
+        object-fit="{{objectFit}}" play-btn-position="center" 
+        bindplay="playStart"
+        bindloadedmetadata="videometa" src="{{videoSrc}}" poster="{{imageSrc}}" controls></video>
       </view>
       <div class="des" wx:if="{{status=='0'}}">审核中</div>
       <div class="des" wx:if="{{status=='2'}}">{{refuseReason}}</div>
@@ -39,7 +42,8 @@
       status: null,
       refuseReason: '',
       disabledStatus: false,
-      videoHeight: ''
+      videoHeight: '',
+      objectFit: 'contain'
     }
     computed = {
       now () {
@@ -58,7 +62,7 @@
       wx.chooseVideo({
         sourceType: ['album', 'camera'],
         maxDuration: 12,
-        camera: 'back',
+        camera: 'front',
         success: (res) => {
           console.log(res)
           if (res.duration > 12) {
@@ -148,6 +152,9 @@
       // this.videoHeight=height
       // this.$apply()
     }
+    playStart() {
+      this.objectFit = 'cover'
+    }
     onLoad () {
       console.log(this.$parent.globalData.openid)
       this.getVideoInfo()
@@ -197,12 +204,12 @@
     }
   }
   .user-video{
-    margin:30px auto;
+    margin:0 auto 20px;
     width: 100%;
     text-align: center;
     .video{
       width: 100%;
-      height: 450px;
+      height: 800rpx;
       margin-bottom: 30rpx;
     }
     .des{
