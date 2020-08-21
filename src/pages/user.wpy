@@ -64,7 +64,7 @@
           console.log(res)
           if (res.errMsg === 'chooseMedia:ok') {
             if (res.tempFiles[0].duration > 12) {
-              wx.showToast({ title: '视频超过12s请重新上传', icon: 'none' })
+              wx.showToast({ title: '视频超过12s', icon: 'none' })
             } else {
               this.videoSrc = res.tempFiles[0].tempFilePath
               this.$apply()
@@ -96,7 +96,7 @@
             this.status = 0
             this.disabledStatus = true
             this.$apply()
-            wx.showToast({title: '上传完成，请等待审核', icon: 'success', mask: true, duration: 2000})
+            wx.showToast({title: '上传完成审核中', icon: 'success', mask: true, duration: 2000})
           } else {
             wx.showToast({ title: data.message, icon: 'none' })
           }

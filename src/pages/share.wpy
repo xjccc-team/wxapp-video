@@ -91,7 +91,7 @@
           this.noscroll = ''
           this.$apply()
           wepy.showToast({
-            title: '保存失败,请重试',
+            title: '保存失败请重试',
             icon: 'success',
             duration: 2000
           })
