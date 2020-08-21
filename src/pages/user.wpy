@@ -4,7 +4,7 @@
     <image class="bg" src="../images/bg.jpg" />
     <view class="user-video" wx:if="{{videoSrc}}">
       <view class="video">
-        <video class="video"  custom-cache="{{false}}"  src="{{videoSrc}}" poster="{{imageSrc}}" controls></video>
+        <video class="video" style="height:{{videoHeight}}px" object-fit="cover" play-btn-position="center" bindloadedmetadata="videometa" src="{{videoSrc}}" poster="{{imageSrc}}" controls></video>
       </view>
       <div class="des" wx:if="{{status=='0'}}">审核中</div>
       <div class="des" wx:if="{{status=='2'}}">{{refuseReason}}</div>
@@ -38,7 +38,8 @@
       imageSrc: '',
       status: null,
       refuseReason: '',
-      disabledStatus: false
+      disabledStatus: false,
+      videoHeight: ''
     }
     computed = {
       now () {
@@ -54,23 +55,17 @@
       }
     }
     choseVideo () {
-      wx.chooseMedia({
-        count: 1,
-        mediaType: ['video'],
+      wx.chooseVideo({
         sourceType: ['album', 'camera'],
         maxDuration: 12,
         camera: 'back',
         success: (res) => {
           console.log(res)
-          if (res.errMsg === 'chooseMedia:ok') {
-            if (res.tempFiles[0].duration > 12) {
-              wx.showToast({ title: '视频超过12s', icon: 'none' })
-            } else {
-              this.videoSrc = res.tempFiles[0].tempFilePath
-              this.$apply()
-            }
+          if (res.duration > 12) {
+            wx.showToast({ title: '视频超过12s', icon: 'none' })
           } else {
-            wx.showToast({ title: '上传失败', icon: 'none' })
+            this.videoSrc = res.tempFilePath
+            this.$apply()
           }
         }
       })
@@ -89,7 +84,6 @@
           duration: 12
         },
         success: (res) => {
-          console.log(JSON.parse(res.data))
           const data = JSON.parse(res.data)
           wx.hideLoading()
           if (data.status === 3002) {
@@ -145,6 +139,15 @@
         }
       })
     }
+    videometa(event) {
+      // var height = event.detail.height
+      // var width = event.detail.width
+      // var proportion = height / width
+      // var windowWidth = wepy.getSystemInfoSync().windowWidth
+      // height = proportion * windowWidth
+      // this.videoHeight=height
+      // this.$apply()
+    }
     onLoad () {
       console.log(this.$parent.globalData.openid)
       this.getVideoInfo()
@@ -197,11 +200,9 @@
     margin:30px auto;
     width: 100%;
     text-align: center;
-    padding: 0 30rpx;
-    box-sizing: border-box;
     .video{
       width: 100%;
-      height: 400rpx;
+      height: 450px;
       margin-bottom: 30rpx;
     }
     .des{
