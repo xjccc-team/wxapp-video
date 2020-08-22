@@ -6,9 +6,9 @@
       <view  wx:if="{{!videoLists.length}}" class="no-data">暂无数据</view>
       <view class="video-item" wx:for="{{videoLists}}" wx:key="code">
         <view class="video-box">
-          <video class="video" enable-auto-rotation="{{true}}" initial-time="0"  wx:if='{{index==videoIndex}}' id='video{{index}}'  autoplay='{{true}}' show-center-play-btn="{{false}}" poster="{{item.imageSrc}}" src="{{item.videoSrc}}" controls></video>
+          <video class="video" enable-auto-rotation="{{true}}" object-fit="fill"   wx:if='{{index==videoIndex}}' id='video{{index}}'  autoplay='{{true}}' show-center-play-btn="{{false}}" poster="{{item.imageSrc}}" src="{{item.videoSrc}}" controls></video>
           <image class='video-img' wx:if='{{index!=videoIndex}}'  src='{{item.imageSrc}}'></image>
-          <view class="play" id="{{index}}" @tap="videoPlay({{index}})">sd</view>
+          <view class="play" id="{{index}}" wx:if='{{index!=videoIndex}}' @tap="videoPlay({{index}})">&#xe693;</view>
         </view>
         <view class="prise" wx:if="{{item.isPraise}}" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
         <view class="no-prise" wx:else @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
@@ -202,9 +202,12 @@
           position: absolute;
           left: 50%;
           top: 50%;
-          width: 20px;
           text-align: center;
           transform: translate(-50%,-50%);
+          font-family: 'video';
+          font-size: 70rpx;
+          color: #fff;
+          z-index: 5;
         }
       }
       .prise,.no-prise{

@@ -62,9 +62,8 @@
       wx.chooseVideo({
         sourceType: ['album', 'camera'],
         maxDuration: 12,
-        camera: 'front',
+        camera: 'back',
         success: (res) => {
-          console.log(res)
           if (res.duration > 12) {
             wx.showToast({ title: '视频超过12s', icon: 'none' })
           } else {
