@@ -1,23 +1,25 @@
 
 <template>
  <view class="container">
-    <image class="bg" src="../images/bg.jpg" />
-    <image class="banner" src="https://www.wingstechnology.cn/mpimage/banner.png" />
-    <navigator url="/pages/user" class="to-user" hover-class="none"></navigator>
-    <navigator url="/pages/list" class="to-list" hover-class="none"></navigator>
-    <image class="des" src="https://www.wingstechnology.cn/mpimage/descript.png" />
+   <view class="main">
+     <view class="btn">为五矿信托加油</view>
+     <view class="btn">查看全国加油盛况</view>
+    <image class="logo" src="../images/brand.png" />
+   </view>
+   <tabBars :active="0"></tabBars>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import testMixin from '../mixins/test'
-
+  import TabBars from '../components/tabBars'
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: '首页'
     }
     components = {
+      tabBars: TabBars
     }
     mixins = [testMixin]
     data = {
@@ -30,7 +32,6 @@
     onShareAppMessage(res) {
       return {
         title: '让我们一起为五矿加油',
-        // imageUrl: 'https://www.wingstechnology.cn/mpimage/banner.jpg',
         path: '/pages/index'
       }
     }
@@ -47,43 +48,32 @@
 </script>
 <style lang="less">
 .container{
-  padding: 0 32rpx;
   text-align: center;
   position: relative;
-  .bg{
+  overflow: hidden;
+  background:rgba(250,250,250,1);
+  .main{
     flex:1;
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: -1;
     width: 100%;
-    height: 100%;
-  }
-  .banner{
-    margin:132rpx auto 115rpx;
-    width: 530rpx;
-    height: 458rpx;
-  }
-  .to-user{
-     margin:0 auto 40rpx;
-     width: 410rpx;
-     height: 81rpx;
-     background: url('https://www.wingstechnology.cn/mpimage/jiayou.png') no-repeat;
-     background-size: contain;
-  }
-  .to-list{
-    width: 410rpx;
-     height: 81rpx;
-      background: url('https://www.wingstechnology.cn/mpimage/guangchang.png') no-repeat;
-      background-size: contain;
-  }
-  .des{
-    position: fixed;
-    bottom: 90rpx;
-    width: 253px;
-    height:20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    .btn{
+      width:504rpx;
+      height:100rpx;
+      background:linear-gradient(90deg,rgba(254,105,124,1) 0%,rgba(199,0,25,1) 100%);
+      box-shadow:0px 20rpx 30rpx rgba(255,0,0,0.16);
+      border-radius:60rpx;
+      margin-bottom: 30rpx;
+      text-align: center;
+      line-height: 100rpx;
+      color: #fff;
+    }
+    .logo{
+      margin-top: 40rpx;
+      width: 254rpx;
+      height: 137rpx;
+    }
   }
 }
 </style>
