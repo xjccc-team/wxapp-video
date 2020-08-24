@@ -1,35 +1,53 @@
 
 <template>
  <view class="container">
-    <image class="bg" src="../images/bg.jpg" />
-    <scroll-view scroll-y class="video-list" @scrolltolower="scrolltolower"	>
-      <view  wx:if="{{!videoLists.length}}" class="no-data">暂无数据</view>
-      <view class="video-item" wx:for="{{videoLists}}" wx:key="code">
-        <view class="video-box">
-          <video class="video" enable-auto-rotation="{{true}}" object-fit="fill"   wx:if='{{index==videoIndex}}' id='video{{index}}'  autoplay='{{true}}' show-center-play-btn="{{false}}" poster="{{item.imageSrc}}" src="{{item.videoSrc}}" controls></video>
-          <image class='video-img' wx:if='{{index!=videoIndex}}'  src='{{item.imageSrc}}'></image>
-          <view class="play" id="{{index}}" wx:if='{{index!=videoIndex}}' @tap="videoPlay({{index}})">&#xe693;</view>
+    <scroll-view scroll-y class="main" @scrolltolower="scrolltolower"	>
+      <view class="header-wrap">
+        <text>点赞喜欢的视频</text>
+        <view class="right">
+          <van-button type="default">按时间</van-button>
+          <van-button type="default">按赞数</van-button>
         </view>
-        <view class="prise" wx:if="{{item.isPraise}}" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
-        <view class="no-prise" wx:else @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
       </view>
+      <van-row gutter="30">
+        <van-col span="12">
+          <videoItem></videoItem>
+        </van-col>
+        <van-col span="12">
+          <videoItem></videoItem>
+        </van-col>
+        <van-col span="12">
+          <videoItem></videoItem>
+        </van-col>
+      </van-row>
     </scroll-view>
-    <view class="footer">
-      <view @tap="toHome" url="/pages/index" class="go-home" ></view>
-      <image class="des" src="https://www.wingstechnology.cn/mpimage/descript.png" />
-    </view>
+    <authorizationAction :actionShow.sync="actionShow"></authorizationAction>
+    <!-- 模拟tabbar -->
+   <tabBars active="1"></tabBars>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
   import testMixin from '../mixins/test'
+  import TabBars from '../components/tabBars'
+  import AuthorizationAction from '../components/authorizationAction'
+  import VideoItem from '../components/videoItem'
   import XHR from '../api/'
   export default class List extends wepy.page {
     config = {
-      navigationBarTitleText: '加油广场'
+      navigationBarTitleText: '加油广场',
+      navigationBarBackgroundColor: '#C70019',
+      'usingComponents': {
+        'van-button': '../components/vant/button/index',
+        'van-row': '../components/vant/row/index',
+        'van-col': '../components/vant/col/index'
+      }
     }
     components = {
+      tabBars: TabBars,
+      videoItem: VideoItem,
+      authorizationAction: AuthorizationAction
     }
     mixins = [testMixin]
     data = {
@@ -66,20 +84,6 @@
           })
         }
       },
-      // videoPlay(index) {
-      //   if (!this.videoIndex) { // 没有播放时播放视频
-      //     this.videoIndex = index
-      //     const videoContext = wx.createVideoContext('video' + index, this.$wx)
-      //     videoContext.requestFullScreen({ direction: 0 })
-      //   } else {
-      //     const videoContextPrev = wx.createVideoContext('video' + this.videoIndex)
-      //     videoContextPrev.exitFullScreen()
-      //     videoContextPrev.stop()
-      //     this.videoIndex = index
-      //     const videoContext = wx.createVideoContext('video' + index, this.$wx)
-      //     videoContext.requestFullScreen({ direction: 0 })
-      //   }
-      // },
       fullScreen(e) {
         console.log(e)
       }
@@ -88,11 +92,6 @@
       this.videoIndex = e.target.id
       const videoContext = wx.createVideoContext('video' + this.videoIndex, this.$wx)
       videoContext.requestFullScreen()
-    }
-    toHome() {
-      wx.navigateBack({
-        delta: this.pagesIndex
-      })
     }
     scrolltolower() {
       if (!this.finish) {
@@ -126,10 +125,6 @@
       }
     }
     onLoad () {
-      // eslint-disable-next-line no-undef
-      let pages = getCurrentPages()
-      this.pagesIndex = pages.length - 1
-      this.$apply()
       this.getVideoList()
     }
   }
@@ -138,121 +133,14 @@
 .container{
   text-align: center;
   position: relative;
-  .bg{
+  .main{
     flex:1;
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: -1;
     width: 100%;
-    height: 100%;
-  }
-  .no-data{
-    font-size: 32rpx;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    height: 100%;
-    &::before{
-      display: block;
-      content:'\e627';
-      font-family: 'video';
-      font-size: 260rpx;
-      margin-bottom: 40rpx;
-    }
-  }
-  .video-list{
-    height: 940rpx;
+    height:100%;
+    text-align: center;
+    overflow: hidden;
+    padding: 0 30rpx;
     box-sizing: border-box;
-    padding: 19rpx 110rpx 0;
-    .video-item{
-      width: 50%;
-      float: left;
-      margin-top: 37rpx;
-      &:nth-child(odd){
-        padding-right: calc(50% - 216rpx);
-        box-sizing: border-box;
-      }
-      &:nth-child(even){
-        padding-left: calc(50% - 216rpx);
-        box-sizing: border-box;
-      }
-      .video-box{
-        width: 216rpx;
-        height: 211rpx;
-        background: url('https://www.wingstechnology.cn/mpimage/video-bg.png') no-repeat;
-        padding: 12rpx;
-        box-sizing: border-box;
-        background-size: contain;
-        overflow: hidden;
-        position: relative;
-        video{
-          width: 100%;
-          height: 100%;
-        }
-        .video-img{
-          width: 100%;
-          height: 100%;
-        }
-        .play{
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          text-align: center;
-          transform: translate(-50%,-50%);
-          font-family: 'video';
-          font-size: 70rpx;
-          color: #fff;
-          z-index: 5;
-        }
-      }
-      .prise,.no-prise{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 31rpx;
-        margin-top: 21rpx;
-        height: 40rpx;
-        &::before{
-          content:'';
-          width: 50rpx;
-          height: 40rpx;
-          background: url('https://www.wingstechnology.cn/mpimage/prise.png')no-repeat;
-          background-size: contain;
-          display: inline-flex;
-          margin-right: 18rpx;
-        }
-      }
-      .no-prise{
-        &::before{
-          content:'';
-          width: 50rpx;
-          height: 40rpx;
-          background: url('https://www.wingstechnology.cn/mpimage/no-prise.png')no-repeat;
-          background-size: contain;
-          display: inline-flex;
-          margin-right: 18rpx;
-        }
-      }
-    }
-  }
-  .footer{
-    .go-home{
-      width: 186rpx;
-      height: 66rpx;
-      background: url('https://www.wingstechnology.cn/mpimage/go-home.png') no-repeat;
-      background-size: contain;
-      border:none !important;
-       margin:62rpx auto 50rpx;
-    }
-    .des{
-      width: 253px;
-      height:20px;
-    }
   }
 }
 </style>

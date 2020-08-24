@@ -1,0 +1,49 @@
+<template>
+  <view class="video-item">
+    <view class="video-info">
+      <image class="video-img" src="../images/home-bg.png" />
+      <image class="play" src="../images/home-bg.png" />
+    </view>
+    <view class="user-wrap">
+      <image class="avatar" src="../images/home-bg.png" />
+      <text class="name"></text>
+    </view>
+    <view class="footer">
+      <view class="prise">33434</view>
+      <van-button type="default">转发</van-button>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import testMixin from '../mixins/test'
+  export default class videoItem extends wepy.component {
+    mixins = [testMixin]
+    config = {
+    }
+    props = {
+      item: {
+        type: Object,
+        default: false
+      }
+    }
+    data = {
+    }
+    computed = {
+      userinfo() {
+        return wepy.$store.getState().counter.userinfo
+      }
+    }
+    methods = {
+    }
+
+    events = {
+    }
+
+    onLoad() {
+    }
+  }
+</script>
+<style lang="less" scoped>
+  
+</style>

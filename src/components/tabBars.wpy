@@ -1,20 +1,20 @@
 <template>
   <view class="footer">
-     <navigator class="item">
+     <view class="item" @tap="switchTabs(1)">
        <image wx:if="{{active==1}}" src='../images/guangchang-select.png' />
        <image wx:else src='../images/guangchang.png' />
        <view class="text">加油广场</view>
-     </navigator>
-     <view class="item to-video">
+     </view>
+     <view class="item to-video" @tap="switchTabs(0)">
        <image src='../images/canma-select.png' />
        <view class="img"></view>
        <view class="text">上传视频</view>
      </view>
-     <navigator class="item">
-       <image wx:if="{{active==3}}" src='../images/me-select.png' />
+     <view class="item" @tap="switchTabs(2)">
+       <image wx:if="{{active==2}}" src='../images/me-select.png' />
        <image wx:else src='../images/me.png' />
       <view class="text">我的</view>
-     </navigator>
+     </view>
    </view>
 </template>
 <script>
@@ -24,17 +24,53 @@
     mixins = [testMixin]
     props = {
       active: {
-        type: Number,
-        default: 0
+        type: String,
+        default: '0'
       }
-  
     }
     computed = {
+      userinfo() {
+        return wepy.$store.getState().counter.userinfo
+      }
     }
     methods = {
       // 点击事件
       clickAction(item) {
         this.$emit('clickAction', item)
+      },
+      switchTabs(index) {
+        switch (index) {
+          case '1':
+            if (this.active === '0') {
+              wx.navigateTo({
+                url: '/pages/list'
+              })
+            } else {
+              wx.redirectTo({
+                url: '/pages/list'
+              })
+            }
+  
+            break
+          case '2':
+            if (!this.userinfo.openId || !this.userinfo.mobilePhone) {
+              this.$emit('actionShow', true)
+            } else if (this.active === '0') {
+              wx.navigateTo({
+                url: '/pages/user'
+              })
+            } else {
+              wx.redirectTo({
+                url: '/pages/user'
+              })
+            }
+            break
+          default:
+            wx.redirectTo({
+              url: 'test?id=1'
+            })
+            break
+        }
       }
     }
 

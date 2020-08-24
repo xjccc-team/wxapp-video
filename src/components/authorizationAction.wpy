@@ -1,0 +1,65 @@
+<template>
+ <van-action-sheet round show="{{ actionShow }}"  @close="onClose">
+     <!-- 获取用户信息 -->
+      <view class="user-info" wx:if="{{!userInfo.openId}}">
+        <view class="des">允许小程序获取您的公开信息，可体验更多功能</view>
+        <van-radio-group value="{{ radio }}" @change="onChange">
+          <van-radio name="1">公司员工</van-radio>
+          <van-radio name="2">公司客户</van-radio>
+          <van-radio name="3">合作伙伴</van-radio>
+          <van-radio name="0">其他2</van-radio>
+        </van-radio-group>
+        <view class="footer">
+          <button type="default" hover-class="none" open-type="getUserInfo" bindgetuserinfo="bindgetuserinfo">微信登录授权</button>
+          <view class="cencal" @tap="onClose">取消</view>
+        </view>
+      </view>
+      <view class="user-phone" wx:if="{{userInfo.openId && !userInfo.mobilePhone}}">
+        <image class="logo" src="../images/brand.png" />
+        <text>允许小程序获取您微信绑定的手机号 用于五矿信托积分统计</text>
+        <view class="footer">
+          <button type="default" hover-class="none" open-type="getPhoneNumber" plain bindgetphonenumber="bindPhone">手机号授权</button>
+          <view class="cencal" @tap="onClose">取消</view>
+        </view>
+      </view>
+    </van-action-sheet>
+</template>
+<script>
+  import wepy from 'wepy'
+  import testMixin from '../mixins/test'
+  export default class AuthorizationAction extends wepy.component {
+    mixins = [testMixin]
+    config = {
+    }
+    props = {
+      actionShow: {
+        type: Boolean,
+        default: false
+      }
+    }
+    data = {
+    }
+    computed = {
+      userinfo() {
+        return wepy.$store.getState().counter.userinfo
+      }
+    }
+    methods = {
+      onClose() {
+        this.$emit('actionClose', false)
+      },
+      onChange() {
+  
+      }
+    }
+
+    events = {
+    }
+
+    onLoad() {
+    }
+  }
+</script>
+<style lang="less" scoped>
+  
+</style>
