@@ -3,10 +3,10 @@
  <view class="container">
     <scroll-view scroll-y class="main" @scrolltolower="scrolltolower"	>
       <view class="header-wrap">
-        <text>点赞喜欢的视频</text>
+        <text class="title">点赞喜欢的视频</text>
         <view class="right">
-          <van-button type="default">按时间</van-button>
-          <van-button type="default">按赞数</van-button>
+          <view class="{{order==0?'select btn':'btn'}}">按时间</view>
+          <view class="{{order==1?'select btn':'btn'}}">按赞数</view>
         </view>
       </view>
       <van-row gutter="30">
@@ -22,6 +22,15 @@
       </van-row>
     </scroll-view>
     <authorizationAction :actionShow.sync="actionShow"></authorizationAction>
+    <view class="video-wrap" wx:if="{{videoShow}}">
+      <view class="video">
+        <video class="video" style="height:{{videoHeight}}px" 
+        object-fit="{{objectFit}}" play-btn-position="center" 
+        bindplay="playStart"
+        bindloadedmetadata="videometa" src="{{videoSrc}}" poster="{{imageSrc}}" controls></video>
+      </view>
+      <image class="close" src="../images/close.png" />
+    </view>
     <!-- 模拟tabbar -->
    <tabBars active="1"></tabBars>
   </view>
@@ -40,6 +49,7 @@
       navigationBarBackgroundColor: '#C70019',
       'usingComponents': {
         'van-button': '../components/vant/button/index',
+        'van-action-sheet': '../components/vant/action-sheet/index',
         'van-row': '../components/vant/row/index',
         'van-col': '../components/vant/col/index'
       }
@@ -55,7 +65,9 @@
       videoLists: [],
       finish: false,
       pagesIndex: 0,
-      videoIndex: null
+      order: 0, // 1=最热  0 = 最新
+      videoIndex: null,
+      videoShow: false
     }
     computed = {
       now () {
@@ -141,6 +153,63 @@
     overflow: hidden;
     padding: 0 30rpx;
     box-sizing: border-box;
+    .header-wrap{
+      padding: 30rpx 0;
+      display: flex;
+      align-items: center;
+      .title{
+        font-size:28rpx;
+        font-weight:bold;
+      }
+      .right{
+        flex: 1;
+        text-align: right;
+        .btn{
+          display: inline-block;
+          width:150rpx;
+          height:71rpx;
+          background:rgba(255,255,255,1);
+          border:1rpx solid rgba(213,213,213,1);
+          box-shadow:0px 10rpx 10rpx rgba(0,0,0,0.05);
+          border-radius:35rpx;
+          line-height: 71rpx;
+          font-size:24rpx;
+          text-align: center;
+          color: #A1A1A1FF;
+          &:first-child{
+            margin-right: 20rpx;
+          }
+          &.select{
+            background:rgba(255,255,255,1);
+            border:1px solid rgba(213,213,213,1);
+            box-shadow:0px 10px 10px rgba(0,0,0,0.05);
+            color: #000000FF;
+          }
+        }
+      }
+    }
+  }
+  .video-wrap{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background:rgba(0,0,0,1);
+    opacity:0.8;
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    flex-direction: column;
+    .video{
+      width: 100%;
+      height: 750rpx;
+    }
+    .close{
+      width: 73rpx;
+      height: 73rpx;
+      margin-top: 63rpx;
+    }
   }
 }
 </style>

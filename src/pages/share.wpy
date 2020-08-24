@@ -2,10 +2,8 @@
 <template>
  <view class="container">
   <canvas type="2d" id="myCanvas"></canvas>
-  <cover-view class="upload-img">
-    <button type="default" class="save-btn" plain @tap="saveImage">保存图片</button>
-  </cover-view>
-  </view>
+  <button type="default" class="save-btn" plain @tap="saveImage">保存图片</button>
+</view>
 </template>
 
 <script>
@@ -116,24 +114,24 @@
       })
     }
     async drawFun(canvas, ctx) {
-      await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/bg.jpg').then(img => {
-        this.drawRoundRectAvatar(ctx, 0, 0, this.windowW, this.windowH, 1, img)
+      await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/share-bg.png').then(img => {
+        this.drawRoundRectAvatar(ctx, 0, 0, this.windowW, 583, 1, img)
       })
-      await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/share-title.png').then(img => {
-        this.drawRoundRectAvatar(ctx, this.windowW / 2 - 131, 68, 262, 123, 1, img)
+      await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/share-text.png').then(img => {
+        this.drawRoundRectAvatar(ctx, 21, 278, 257, 102, 1, img)
       })
-      await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/share-block.png').then(img => {
-        this.drawRoundRectAvatar(ctx, this.windowW / 2 - 156, 205, 313, 230, 1, img)
+      await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/share-img.png').then(img => {
+        this.drawRoundRectAvatar(ctx, 109, 395, 99, 151, 1, img)
       })
-      await this.downloadImage(canvas, this.userinfo.avatarUrl).then(img => {
-        this.drawRoundRectAvatar(ctx, this.windowW / 2 - 60, 250, 100, 100, 50, img)
-      })
-      await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/code.png').then(img => {
-        this.drawRoundRectAvatar(ctx, this.windowW / 2 - 51, 459, 103, 103, 1, img)
-      })
-      await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/logo.png').then(img => {
-        this.drawRoundRectAvatar(ctx, this.windowW / 2 - 61, 600, 123, 46, 1, img)
-      })
+      // await this.downloadImage(canvas, this.userinfo.avatarUrl).then(img => {
+      //   this.drawRoundRectAvatar(ctx, this.windowW / 2 - 60, 250, 100, 100, 50, img)
+      // })
+      // await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/code.png').then(img => {
+      //   this.drawRoundRectAvatar(ctx, this.windowW / 2 - 51, 459, 103, 103, 1, img)
+      // })
+      // await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/logo.png').then(img => {
+      //   this.drawRoundRectAvatar(ctx, this.windowW / 2 - 61, 600, 123, 46, 1, img)
+      // })
     }
     // 绘制背景图
     drawRoundRectAvatar(ctx, x, y, w, h, r, imgPath, color) {
@@ -159,7 +157,7 @@
       ctx.fill()
     }
     onLoad () {
-      this.windowW = wepy.getSystemInfoSync().windowWidth
+      this.windowW = wepy.getSystemInfoSync().windowWidth - 40
       this.windowH = wepy.getSystemInfoSync().windowHeight
       this.setData({
         windowH: wepy.getSystemInfoSync().windowHeight
@@ -173,23 +171,24 @@
 .container{
   text-align: center;
   position: relative;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  background:rgba(250,250,250,1);
   canvas{
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-  }
-  .upload-img{
-    position: fixed;
-    top: 0;
-    right: 10px;
-    z-index: 1000 !important;
+   width: 592rpx;
+   height:583px;
+   background: #fff;
+   border-radius: 10rpx;
   }
   .save-btn{
     border:none !important;
     color:#fff !important;
+    margin: 68rpx auto 0;
+    width:328rpx;
+    height:88rpx;
+    background:linear-gradient(90deg,rgba(254,105,124,1) 0%,rgba(199,0,25,1) 100%);
+    box-shadow:0px 20rpx 30rpx rgba(255,0,0,0.16);
+    border-radius:60rpx;
   }
 }
 </style>

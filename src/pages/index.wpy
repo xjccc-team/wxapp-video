@@ -23,9 +23,10 @@
       navigationBarTitleText: '首页',
       navigationStyle: 'custom',
       usingComponents: {
-        'van-radio': '../components/vant/radio/index',
-        'van-radio-group': '../components/vant/radio-group/index',
-        'van-action-sheet': '../components/vant/action-sheet/index'
+        'van-button': '../components/vant/button/index',
+        'van-action-sheet': '../components/vant/action-sheet/index',
+        'van-row': '../components/vant/row/index',
+        'van-col': '../components/vant/col/index'
       }
     }
     components = {
@@ -35,7 +36,7 @@
     mixins = [testMixin]
     data = {
       radio: '1',
-      actionShow: true
+      actionShow: false
     }
     computed = {
       userinfo () {
@@ -67,16 +68,20 @@
     bindPhone() {
   
     }
-    checkLoginStatus(res) {
+    checkLoginStatus() {
       if (!this.userinfo.openId || !this.userinfo.mobilePhone) {
         this.actionShow = true
+      } else {
+        this.actionShow = false
       }
+      this.$apply()
     }
     onLoad () {
       if (this.$parent.globalData.userInfo) {
         this.checkLoginStatus()
       } else {
         this.$parent.employIdCallback = userInfo => {
+          this.userinfo = userInfo
           this.checkLoginStatus()
         }
       }

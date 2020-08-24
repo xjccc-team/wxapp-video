@@ -1,24 +1,24 @@
 <template>
- <van-action-sheet round show="{{ actionShow }}"  @close="onClose">
+ <van-action-sheet show="{{ actionShow }}" title="" class="action-wrap" @close="onClose">
      <!-- 获取用户信息 -->
-      <view class="user-info" wx:if="{{!userInfo.openId}}">
+      <view class="user-info" wx:if="{{!userinfo.openId}}">
         <view class="des">允许小程序获取您的公开信息，可体验更多功能</view>
-        <van-radio-group value="{{ radio }}" @change="onChange">
-          <van-radio name="1">公司员工</van-radio>
-          <van-radio name="2">公司客户</van-radio>
-          <van-radio name="3">合作伙伴</van-radio>
-          <van-radio name="0">其他2</van-radio>
-        </van-radio-group>
+        <view class="radio-wrap" >
+          <view class="{{tag==1?'btn select':'btn'}}" @tap="onChange(1)">公司员工</view>
+          <view class="{{tag==2?'btn select':'btn'}}" @tap="onChange(2)">公司客户</view>
+          <view class="{{tag==3?'btn select':'btn'}}" @tap="onChange(3)">合作伙伴</view>
+          <view class="{{tag==0?'btn select':'btn'}}" @tap="onChange(0)">其他</view>
+        </view>
         <view class="footer">
-          <button type="default" hover-class="none" open-type="getUserInfo" bindgetuserinfo="bindgetuserinfo">微信登录授权</button>
+          <button class="auth-btn" type="default" hover-class="none" plain open-type="getUserInfo" bindgetuserinfo="bindgetuserinfo">微信登录授权</button>
           <view class="cencal" @tap="onClose">取消</view>
         </view>
       </view>
-      <view class="user-phone" wx:if="{{userInfo.openId && !userInfo.mobilePhone}}">
-        <image class="logo" src="../images/brand.png" />
-        <text>允许小程序获取您微信绑定的手机号 用于五矿信托积分统计</text>
+      <view class="user-phone" wx:if="{{userinfo.openId && !userinfo.mobilePhone}}">
+        <image class="logo" src="../images/auth-brand.png" />
+        <text>{{phoneText}}</text>
         <view class="footer">
-          <button type="default" hover-class="none" open-type="getPhoneNumber" plain bindgetphonenumber="bindPhone">手机号授权</button>
+          <button type="default" hover-class="none" class="auth-btn" open-type="getPhoneNumber" plain bindgetphonenumber="bindPhone">手机号授权</button>
           <view class="cencal" @tap="onClose">取消</view>
         </view>
       </view>
@@ -27,6 +27,7 @@
 <script>
   import wepy from 'wepy'
   import testMixin from '../mixins/test'
+  import XHR from '../api/'
   export default class AuthorizationAction extends wepy.component {
     mixins = [testMixin]
     config = {
@@ -38,6 +39,9 @@
       }
     }
     data = {
+      sessionKey: '',
+      tag: 1,
+      phoneText: '允许小程序获取您微信绑定的手机号\n 用于五矿信托积分统计'
     }
     computed = {
       userinfo() {
@@ -48,18 +52,175 @@
       onClose() {
         this.$emit('actionClose', false)
       },
-      onChange() {
-  
+      onChange(val) {
+        this.tag = val
+      },
+      bindgetuserinfo(res) {
+        if (res.detail.userInfo) {
+          this.toAuthorization(res.detail.userInfo)
+        }
+      },
+      async bindPhone(res) {
+        if (res.detail.encryptedData) {
+          const json = {
+            encryptedData: res.detail.encryptedData,
+            iv: res.detail.iv,
+            sessionKey: this.sessionKey
+          }
+          this.decodeMobile(json)
+        }
       }
     }
-
+    decodeMobile (json) {
+      wx.showLoading({
+        title: '加载中'
+      })
+      XHR.decodeMobile(json).then(res => {
+        if (res.statusCode === 200) {
+          if (res.data.phoneNumber) {
+            let formDate = {
+              mobilePhone: res.data.phoneNumber,
+              openId: this.openid
+            }
+            this.registerMobile(formDate)
+          }
+        }
+      })
+    }
+    registerMobile (json) {
+      XHR.registerMobile(json).then(res => {
+        wx.hideLoading()
+        this.$emit('actionClose', false)
+      })
+    }
+    toAuthorization(json) {
+      json.openId = this.openid
+      json.nickname = json.nickName
+      json.tag = this.tag
+      XHR.register(json).then(res => {
+        if (res.statusCode === 200) {
+          this.authorOk(json)
+        } else {
+          console.log('接口异常')
+        }
+      }).catch(e => {
+        console.log('接口异常')
+      })
+    }
+    authorOk(json) {
+      wepy.setStorageSync('userinfo', json)
+      wepy.$store.dispatch({ type: 'USERINFO', payload: json })
+    }
     events = {
     }
-
-    onLoad() {
+    async getSessionKey () {
+      let res = await wepy.login()
+      let ress = await XHR.getOpenId({code: res.code})
+      return ress.data.data.session_key
+    }
+    async onLoad() {
+      let sessionKey = await this.getSessionKey()
+      this.sessionKey = sessionKey
     }
   }
 </script>
 <style lang="less" scoped>
-  
+  .action-wrap{
+    .user-info{
+      .des{
+        font-size:26rpx;
+        line-height:45rpx;
+        color:rgba(0,0,0,1);
+        margin-top: 95rpx;
+        width: 100%;
+        text-align: center;
+      }
+      .radio-wrap{
+        width: 490rpx;
+        margin:60rpx auto 0;
+        .btn{
+          margin-bottom: 40rpx;
+          width: 221rpx;
+          height: 96rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 50rpx;
+          font-size:30rpx;
+          background-color:rgba(246,246,246,1);
+          color: #333333FF;
+          float: left;
+          &.select{
+            background:rgba(255,255,255,1);
+            border:4rpx solid rgba(199,0,25,1);
+            color: rgba(199,0,25,1);
+            width: 213rpx;
+            height: 88rpx;
+          }
+          &:nth-child(2n){
+            margin-right: 0;
+          }
+        }
+      }
+      .footer{
+        margin-top: 18rpx;
+        .auth-btn{
+          margin:84rpx auto 20rpx;
+          width:504rpx;
+          height:88rpx;
+          background:linear-gradient(90deg,rgba(254,105,124,1) 0%,rgba(199,0,25,1) 100%);
+          box-shadow:0px 20rpx 30rpx rgba(255,0,0,0.16);
+          border-radius:60rpx;
+          font-size:36rpx;
+          border:none !important;
+          color: #fff;
+        }
+        .cencal{
+          width: 100%;
+          text-align: center;
+          padding: 24rpx 0;
+          height:45rpx;
+          font-size:32rpx;
+          line-height:48rpx;
+          color:rgba(161,161,161,1);
+          margin-bottom: 60rpx;
+        }
+      }
+    }
+
+    .user-phone{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      .logo{
+        width: 152rpx;
+        height: 167rpx;
+        margin:96rpx auto 57rpx;
+      }
+      .footer{
+        .auth-btn{
+          margin:84rpx auto 20rpx;
+          width:504rpx;
+          height:88rpx;
+          background:linear-gradient(90deg,rgba(254,105,124,1) 0%,rgba(199,0,25,1) 100%);
+          box-shadow:0px 20rpx 30rpx rgba(255,0,0,0.16);
+          border-radius:60rpx;
+          font-size:36rpx;
+          color: #fff;
+          border:none !important;
+        }
+        .cencal{
+          width: 100%;
+          text-align: center;
+          padding: 24rpx 0;
+          height:45rpx;
+          font-size:32rpx;
+          line-height:48rpx;
+          color:rgba(161,161,161,1);
+          margin-bottom: 60rpx;
+        }
+      }
+    }
+  }
 </style>

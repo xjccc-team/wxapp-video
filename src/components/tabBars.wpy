@@ -41,6 +41,9 @@
       switchTabs(index) {
         switch (index) {
           case '1':
+            if (this.active === '1') {
+              return
+            }
             if (this.active === '0') {
               wx.navigateTo({
                 url: '/pages/list'
@@ -53,16 +56,16 @@
   
             break
           case '2':
-            if (!this.userinfo.openId || !this.userinfo.mobilePhone) {
-              this.$emit('actionShow', true)
-            } else if (this.active === '0') {
-              wx.navigateTo({
-                url: '/pages/user'
-              })
+            if (this.active === '2') {
+              return
+            }
+            if (this.userinfo) {
+              this.checkUser()
             } else {
-              wx.redirectTo({
-                url: '/pages/user'
-              })
+              this.$parent.employIdCallback = userInfo => {
+                this.userinfo = userInfo
+                this.checkUser()
+              }
             }
             break
           default:
@@ -73,7 +76,19 @@
         }
       }
     }
-
+    checkUser() {
+      if (!this.userinfo.openId || !this.userinfo.mobilePhone) {
+        this.$emit('actionShow', true)
+      } else if (this.active === '0') {
+        wx.navigateTo({
+          url: '/pages/user'
+        })
+      } else {
+        wx.redirectTo({
+          url: '/pages/user'
+        })
+      }
+    }
     events = {
     }
 
