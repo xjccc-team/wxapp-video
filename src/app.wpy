@@ -101,6 +101,7 @@ export default class extends wepy.app {
         let {data, status} = res.data
         data = data || {}
         if (!status) {
+          wepy.$store.dispatch({ type: 'OPENID', payload: data.openId })
           wepy.$store.dispatch({ type: 'USERINFO', payload: data })
           this.globalData.userInfo = data
           wepy.setStorageSync('userinfo', data)

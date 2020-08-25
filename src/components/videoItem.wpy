@@ -2,7 +2,7 @@
   <view class="video-item">
     <view class="video-info">
       <image class="video-img" src="{{item.imageSrc}}" />
-      <image class="play" @tap="showVideo" src="../images/paly.png" />
+      <image class="play" bindtap="showVideo({{item}})" src="../images/paly.png" />
     </view>
     <view class="user-wrap">
       <image class="avatar" src="{{item.headImageUrl}}" />
@@ -39,8 +39,9 @@
       }
     }
     methods = {
-      showVideo() {
-        this.$emit('showVideo', this.item)
+      showVideo(item) {
+        console.log(item)
+        this.$emit('showVideo', item)
       },
       toPrise() {
         this.$emit('toPrise', this.item)

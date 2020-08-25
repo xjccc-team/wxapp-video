@@ -111,6 +111,10 @@
     height:100%;
     text-align: center;
     overflow: hidden;
+    position: relative;
+    z-index: 1;
+    padding-top: 915rpx;
+    box-sizing: border-box;
     .btn{
       width:504rpx;
       height:100rpx;
@@ -122,12 +126,13 @@
       color: #fff;
       margin:0 auto 30rpx;
     }
-    .first{
-      margin-top: -85rpx;
-    }
     .top{
       width: 100%;
       height: 1000rpx;
+      position: fixed;
+      z-index: -1;
+      top: 0;
+      left: 0;
     }
     .logo{
       width: 254rpx;

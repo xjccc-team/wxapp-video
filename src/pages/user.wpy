@@ -9,13 +9,13 @@
         <view class="name">{{userinfo.nickname}}</view>
       </view>
       <block wx:if="{{videoList.length}}">
-        <view class="video-list" wx:for="{{videoList}}">
+        <view class="video-list" wx:for="{{videoList}}" wx:key="index">
           <view class="left">
             <!-- <image src="../images/user-top.png" /> -->
             <video class="video" initial-time="0" object-fit="cover" autoplay='{{true}}'  src="{{item.videoSrc}}" controls></video>
           </view>
           <view class="right">
-            <view class="prise">{{item.praise||'--'}}</view>
+            <view class="prise" @tap="toPrise({{item}},{{index}})">{{item.praise||'--'}}</view>
             <view class="content" wx:if="{{item.status==0}}">审核中……</view>
             <view class="content" wx:if="{{item.status==1}}">审核通过，已发布</view>
             <view class="content" wx:if="{{item.status==2}}">{{item.refuseReason}}}</view>
@@ -84,6 +84,26 @@
     computed = {
     }
     methods = {
+      toPrise(item, index) {
+        if (item.status !== 1) {
+          this.showToast('审核通过可点赞')
+        } else {
+          XHR.videoPraise({
+            openId: this.openid,
+            videoRecordCode: item.code
+          }).then(res => {
+            let {message, status} = res.data
+            if (status === 0) {
+              this.videoList[index].praise++
+              this.videoList[index].isPraise = true
+              this.$apply()
+              wx.showToast({title: '点赞成功', icon: 'none', mask: true, duration: 2000})
+            } else {
+              wx.showToast({title: message, icon: 'none', duration: 2000})
+            }
+          })
+        }
+      },
       choseVideo () {
         wx.chooseVideo({
           sourceType: ['album', 'camera'],
