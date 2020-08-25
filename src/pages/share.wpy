@@ -9,6 +9,12 @@
 <script>
   import wepy from 'wepy'
   import testMixin from '../mixins/test'
+  import { connect } from 'wepy-redux'
+  @connect({
+    userinfo (state) {
+      return state.counter.userinfo
+    }
+  })
 
   export default class Share extends wepy.page {
     config = {
@@ -18,14 +24,9 @@
     }
     mixins = [testMixin]
     data = {
-      windowW: 375,
-      windowH: 400,
       canvasImg: ''
     }
     computed = {
-      now () {
-        return +new Date()
-      }
     }
 
     methods = {
@@ -49,6 +50,7 @@
             canvas.width = res[0].width * dpr
             canvas.height = res[0].height * dpr
             ctx.scale(dpr, dpr)
+            this.drawText(ctx, this.getPx(296), this.getPx(490), '#000000', 15, this.userinfo.nickname)
             await this.drawFun(canvas, ctx)
             let that = this
             setTimeout(function() {
@@ -56,6 +58,15 @@
               wx.hideLoading()
             }, 200)
           })
+    }
+      // 绘制文案
+    drawText(ctx, x, y, color, size, text, WH) {
+      ctx.save()
+      ctx.fillStyle = color
+      ctx.font = `${size}px Arial`
+      ctx.textAlign = 'center'
+      ctx.fillText(text, x, y, this.getPx(580))
+      ctx.restore()
     }
     daochu(canvas) {
       wx.canvasToTempFilePath({
@@ -115,23 +126,18 @@
     }
     async drawFun(canvas, ctx) {
       await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/share-bg.png').then(img => {
-        this.drawRoundRectAvatar(ctx, 0, 0, this.windowW, 583, 1, img)
+        this.drawRoundRectAvatar(ctx, 0, 0, this.getPx(592), this.getPx(1166), 1, img)
       })
-      await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/share-text.png').then(img => {
-        this.drawRoundRectAvatar(ctx, 21, 278, 257, 102, 1, img)
+      await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/newImages/share-text.png').then(img => {
+        this.drawRoundRectAvatar(ctx, this.getPx(42), this.getPx(557), this.getPx(514), this.getPx(204), 1, img)
       })
+      await this.downloadImage(canvas, this.userinfo.avatarUrl).then(img => {
+        this.drawRoundRectAvatar(ctx, this.getPx(240), this.getPx(324), this.getPx(120), this.getPx(120), this.getPx(60), img)
+      })
+  
       await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/share-img.png').then(img => {
-        this.drawRoundRectAvatar(ctx, 109, 395, 99, 151, 1, img)
+        this.drawRoundRectAvatar(ctx, this.getPx(218), this.getPx(791), this.getPx(198), this.getPx(302), 1, img)
       })
-      // await this.downloadImage(canvas, this.userinfo.avatarUrl).then(img => {
-      //   this.drawRoundRectAvatar(ctx, this.windowW / 2 - 60, 250, 100, 100, 50, img)
-      // })
-      // await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/code.png').then(img => {
-      //   this.drawRoundRectAvatar(ctx, this.windowW / 2 - 51, 459, 103, 103, 1, img)
-      // })
-      // await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/logo.png').then(img => {
-      //   this.drawRoundRectAvatar(ctx, this.windowW / 2 - 61, 600, 123, 46, 1, img)
-      // })
     }
     // 绘制背景图
     drawRoundRectAvatar(ctx, x, y, w, h, r, imgPath, color) {
@@ -156,13 +162,11 @@
       ctx.fillStyle = color || 'transparent'
       ctx.fill()
     }
+    getPx(val) {
+      let pill = 750 / wx.getSystemInfoSync().windowWidth
+      return parseInt(val / pill)
+    }
     onLoad () {
-      this.windowW = wepy.getSystemInfoSync().windowWidth - 40
-      this.windowH = wepy.getSystemInfoSync().windowHeight
-      this.setData({
-        windowH: wepy.getSystemInfoSync().windowHeight
-      })
-      this.userinfo = wepy.getStorageSync('userinfo')
       this.$apply()
     }
   }
@@ -176,7 +180,7 @@
   background:rgba(250,250,250,1);
   canvas{
    width: 592rpx;
-   height:583px;
+   height:1166rpx;
    background: #fff;
    border-radius: 10rpx;
   }
