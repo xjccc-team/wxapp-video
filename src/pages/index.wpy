@@ -2,10 +2,10 @@
 <template>
  <view class="container">
    <scroll-view scroll-y class="main">
-     <image class="top" src="../images/home-bg.png" />
-     <view class="btn first">为五矿信托加油</view>
+     <image class="top" src="https://www.wingstechnology.cn/mpimage/newimages/home-bg.png" />
+     <view @tap="toUser" class="btn first">为五矿信托加油</view>
      <view class="btn">查看全国加油盛况</view>
-     <image class="logo" src="../images/brand.png" />
+     <image class="logo" src="https://www.wingstechnology.cn/mpimage/newimages/brand.png" />
    </scroll-view>
    <authorizationAction :actionShow.sync="actionShow"></authorizationAction>
     <!-- 模拟tabbar -->
@@ -18,15 +18,21 @@
   import testMixin from '../mixins/test'
   import TabBars from '../components/tabBars'
   import AuthorizationAction from '../components/authorizationAction'
+
+  import { connect } from 'wepy-redux'
+  @connect({
+    userinfo (state) {
+      return state.counter.userinfo
+    }
+  })
+  
   export default class Index extends wepy.page {
     config = {
       navigationBarTitleText: '首页',
       navigationStyle: 'custom',
       usingComponents: {
         'van-button': '../components/vant/button/index',
-        'van-action-sheet': '../components/vant/action-sheet/index',
-        'van-row': '../components/vant/row/index',
-        'van-col': '../components/vant/col/index'
+        'van-action-sheet': '../components/vant/action-sheet/index'
       }
     }
     components = {
@@ -35,13 +41,9 @@
     }
     mixins = [testMixin]
     data = {
-      radio: '1',
       actionShow: false
     }
     computed = {
-      userinfo () {
-        return wepy.$store.getState().counter.userinfo
-      }
     }
     onShareAppMessage(res) {
       return {
@@ -50,7 +52,16 @@
       }
     }
     methods = {
-  
+      toUser() {
+        if (!this.userinfo.openId || !this.userinfo.mobilePhone) {
+          this.actionShow = true
+          this.$apply()
+        } else {
+          wx.navigateTo({
+            url: '/pages/user'
+          })
+        }
+      }
     }
     events = {
       'actionShow': (...args) => {

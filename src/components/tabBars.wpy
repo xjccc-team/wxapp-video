@@ -20,6 +20,12 @@
 <script>
   import wepy from 'wepy'
   import testMixin from '../mixins/test'
+  import { connect } from 'wepy-redux'
+  @connect({
+    userinfo (state) {
+      return state.counter.userinfo
+    }
+  })
   export default class tabBars extends wepy.component {
     mixins = [testMixin]
     props = {
@@ -29,9 +35,6 @@
       }
     }
     computed = {
-      userinfo() {
-        return wepy.$store.getState().counter.userinfo
-      }
     }
     methods = {
       // 点击事件
@@ -69,8 +72,22 @@
             }
             break
           default:
-            wx.redirectTo({
-              url: 'test?id=1'
+            wx.chooseVideo({
+              sourceType: ['album', 'camera'],
+              maxDuration: 12,
+              camera: 'back',
+              success: (res) => {
+                if (res.duration > 12) {
+                  this.showToast('视频超过12s')
+                } else {
+                  wepy.$store.dispatch({ type: 'VIDEONOW', payload: res })
+                  if (this.active !== '2') {
+                    wx.navigateTo({
+                      url: '/pages/user'
+                    })
+                  }
+                }
+              }
             })
             break
         }

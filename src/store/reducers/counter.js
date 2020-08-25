@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions'
-import { INCREMENT, DECREMENT, ASYNC_INCREMENT, MOBILEPHONE, USERINFO, OPENID, VIDEOSRC} from '../types/counter'
+import { INCREMENT, DECREMENT, ASYNC_INCREMENT, MOBILEPHONE, USERINFO, OPENID, VIDEONOW} from '../types/counter'
 
 const defaulState = {
   companyId: 0,
@@ -7,7 +7,7 @@ const defaulState = {
   isIpx: false,
   userinfo: {},
   openid: '',
-  videoSrc: '' // 本地上传视频返回的路径
+  videoNow: {} // 本地上传视频返回的路径
 }
 
 export default handleActions({
@@ -47,10 +47,10 @@ export default handleActions({
       openid: action.payload
     }
   },
-  [VIDEOSRC] (state, action) {
+  [VIDEONOW] (state, action) {
     return {
       ...state,
-      videoSrc: action.payload
+      videoNow: action.payload
     }
   }
 

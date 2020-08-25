@@ -5,31 +5,25 @@
       <view class="header-wrap">
         <text class="title">点赞喜欢的视频</text>
         <view class="right">
-          <view class="{{order==0?'select btn':'btn'}}">按时间</view>
-          <view class="{{order==1?'select btn':'btn'}}">按赞数</view>
+          <view class="{{order==0?'select btn':'btn'}}" @tap="tabsVideo(0)">按时间</view>
+          <view class="{{order==1?'select btn':'btn'}}" @tap="tabsVideo(1)">按赞数</view>
         </view>
       </view>
       <van-row gutter="30">
-        <van-col span="12">
-          <videoItem></videoItem>
-        </van-col>
-        <van-col span="12">
-          <videoItem></videoItem>
-        </van-col>
-        <van-col span="12">
-          <videoItem></videoItem>
-        </van-col>
+        <block wx:for="{{videoLists}}" wx:key="index">
+          <van-col span="12">
+            <videoItem :item.sync="item" :index.sync="index"></videoItem>
+          </van-col>
+        </block>
       </van-row>
+      <view class="no-data" wx:if="{{!videoLists.length}}">暂无数据</view>
     </scroll-view>
     <authorizationAction :actionShow.sync="actionShow"></authorizationAction>
     <view class="video-wrap" wx:if="{{videoShow}}">
       <view class="video">
-        <video class="video" style="height:{{videoHeight}}px" 
-        object-fit="{{objectFit}}" play-btn-position="center" 
-        bindplay="playStart"
-        bindloadedmetadata="videometa" src="{{videoSrc}}" poster="{{imageSrc}}" controls></video>
+        <video class="video" initial-time="0"  autoplay='{{true}}'  src="{{nowVideo.videoSrc}}" controls></video>
       </view>
-      <image class="close" src="../images/close.png" />
+      <image class="close" @tap="closeVideo" src="../images/close.png" />
     </view>
     <!-- 模拟tabbar -->
    <tabBars active="1"></tabBars>
@@ -43,10 +37,18 @@
   import AuthorizationAction from '../components/authorizationAction'
   import VideoItem from '../components/videoItem'
   import XHR from '../api/'
+  import { connect } from 'wepy-redux'
+  @connect({
+    openid (state) {
+      return state.counter.openid
+    }
+  })
+  
   export default class List extends wepy.page {
     config = {
       navigationBarTitleText: '加油广场',
       navigationBarBackgroundColor: '#C70019',
+      navigationBarTextStyle: 'white',
       'usingComponents': {
         'van-button': '../components/vant/button/index',
         'van-action-sheet': '../components/vant/action-sheet/index',
@@ -67,22 +69,21 @@
       pagesIndex: 0,
       order: 0, // 1=最热  0 = 最新
       videoIndex: null,
+      nowVideo: {},
+      actionShow: false,
       videoShow: false
     }
     computed = {
-      now () {
-        return +new Date()
-      }
     }
   
     methods = {
-      toPrise(item, index) {
-        if (item.isPraise) {
+      toPriseFun(item, index) {
+        if (this.nowVideo.isPraise) {
           wx.showToast({title: '已点赞', icon: 'none', mask: true, duration: 2000})
         } else {
           XHR.videoPraise({
-            openId: this.$parent.globalData.openid,
-            videoRecordCode: item.code
+            openId: this.openid,
+            videoRecordCode: this.nowVideo.code
           }).then(res => {
             let {message, status} = res.data
             if (status === 0) {
@@ -96,8 +97,28 @@
           })
         }
       },
-      fullScreen(e) {
-        console.log(e)
+      closeVideo() {
+        this.videoShow = false
+      },
+      tabsVideo(tabIndex) {
+        this.order = tabIndex
+        this.page = 1
+        this.videoLists = []
+        this.finish = false
+        this.getVideoList()
+        this.$apply()
+      }
+    }
+    onShareAppMessage(res) {
+      if (res.from === 'button') {
+        console.log(res.target)
+        this.share.picPath = ''
+        this.$apply()
+      }
+      return {
+        title: '五矿信托十周年加油站精选视频',
+        imageUrl: `${this.imgUrl}${this.share.picPath}`,
+        path: '/pages/list'
       }
     }
     videoPlay(e) {
@@ -115,9 +136,10 @@
         title: '加载中'
       })
       XHR.videoList({
-        openId: this.$parent.globalData.openid,
+        openId: this.openid,
         pageIndex: this.page,
-        pageSize: 8
+        pageSize: 8,
+        order: this.order
       }).then(res => {
         let {data, status} = res.data
         wx.hideLoading()
@@ -132,8 +154,20 @@
       })
     }
     events = {
-      'index-emit': (...args) => {
+      'actionShow': (...args) => {
+        this.actionShow = true
+      },
+      'actionClose': (...args) => {
+        this.actionShow = false
+      },
+      'showVideo': (...args) => {
+        this.videoShow = true
+        this.nowVideo = args
         console.log(args)
+      },
+      'toPrise': (...args) => {
+        console.log(args)
+        this.toPriseFun()
       }
     }
     onLoad () {
@@ -167,7 +201,7 @@
         .btn{
           display: inline-block;
           width:150rpx;
-          height:71rpx;
+          height:70rpx;
           background:rgba(255,255,255,1);
           border:1rpx solid rgba(213,213,213,1);
           box-shadow:0px 10rpx 10rpx rgba(0,0,0,0.05);
@@ -187,6 +221,22 @@
           }
         }
       }
+    }
+  }
+  .no-data{
+    height: calc(100% - 130rpx);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 28rpx;
+    flex: 1;
+    color: #cdcdcd;
+    &::before{
+      content:'\e68c';
+      font-family: 'video';
+      margin: 0 auto 40rpx;
+      font-size: 150rpx;
     }
   }
   .video-wrap{

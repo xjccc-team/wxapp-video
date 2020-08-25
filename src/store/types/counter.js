@@ -10,4 +10,4 @@ export const USERINFO = 'USERINFO'
 
 export const OPENID = 'OPENID'
 
-export const VIDEOSRC = 'VIDEOSRC'
+export const VIDEONOW = 'VIDEONOW'

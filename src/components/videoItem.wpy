@@ -1,16 +1,16 @@
 <template>
   <view class="video-item">
     <view class="video-info">
-      <image class="video-img" src="../images/home-bg.png" />
-      <image class="play" src="../images/paly.png" />
+      <image class="video-img" src="{{item.imageSrc}}" />
+      <image class="play" @tap="showVideo" src="../images/paly.png" />
     </view>
     <view class="user-wrap">
-      <image class="avatar" src="../images/home-bg.png" />
-      <view class="name">sdd</view>
+      <image class="avatar" src="{{item.headImageUrl}}" />
+      <view class="name">{{item.nickname}}</view>
     </view>
     <view class="footer">
-      <view class="prise">33434</view>
-       <button  hover-class="none" class="share" open-type="share" plain >转发</button>
+      <view class="{{item.isPraise?'is-prise prise':'prise'}}" @tap="toPrise">{{item.praise}}</view>
+      <button  hover-class="none" class="share" open-type="share" plain >转发</button>
     </view>
   </view>
 </template>
@@ -25,6 +25,10 @@
       item: {
         type: Object,
         default: false
+      },
+      index: {
+        type: null,
+        default: 0
       }
     }
     data = {
@@ -35,6 +39,12 @@
       }
     }
     methods = {
+      showVideo() {
+        this.$emit('showVideo', this.item)
+      },
+      toPrise() {
+        this.$emit('toPrise', this.item)
+      }
     }
 
     events = {
@@ -107,6 +117,10 @@
           content:'';
           margin-right: 12rpx;
           background: url('https://www.wingstechnology.cn/mpimage/no-prise.png') no-repeat;
+          background-size: cover;
+        }
+        &.is-prise:before{
+           background: url('https://www.wingstechnology.cn/mpimage/prise.png') no-repeat;
           background-size: cover;
         }
       }
