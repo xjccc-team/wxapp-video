@@ -9,24 +9,26 @@
           <view class="{{order==1?'select btn':'btn'}}" @tap="tabsVideo(1)">按赞数</view>
         </view>
       </view>
-      <van-row gutter="30" class="video-list-wrap">
-        <van-col span="12" wx:for="{{videoLists}}" wx:key="index">
-          <view class="video-item">
-            <view class="video-info">
-              <image class="video-img" src="{{item.imageSrc}}" />
-              <image class="play" bindtap="showVideo({{item}})" src="../images/paly.png" />
+      <view class="video-list-wrap">
+        <van-row gutter="30" >
+          <van-col span="12" wx:for="{{videoLists}}" wx:key="index">
+            <view class="video-item">
+              <view class="video-info">
+                <image class="video-img" mode="aspectFill" src="{{item.imageSrc}}" />
+                <image class="play" bindtap="showVideo({{item}})" src="../images/paly.png" />
+              </view>
+              <view class="user-wrap">
+                <image class="avatar" src="{{item.headImageUrl}}" />
+                <view class="name">{{item.nickname}}</view>
+              </view>
+              <view class="footer">
+                <view class="{{item.isPraise?'is-prise prise':'prise'}}" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
+                <button  hover-class="none" class="share" data-url="{{item.imageSrc}}" open-type="share" plain >转发</button>
+              </view>
             </view>
-            <view class="user-wrap">
-              <image class="avatar" src="{{item.headImageUrl}}" />
-              <view class="name">{{item.nickname}}</view>
-            </view>
-            <view class="footer">
-              <view class="{{item.isPraise?'is-prise prise':'prise'}}" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
-              <button  hover-class="none" class="share" data-url="{{item.imageSrc}}" open-type="share" plain >转发</button>
-            </view>
-          </view>
-        </van-col>
-      </van-row>
+          </van-col>
+        </van-row>
+      </view>
       <view class="no-data" wx:if="{{!videoLists.length}}">暂无数据</view>
     </scroll-view>
     <authorizationAction :actionShow.sync="actionShow"></authorizationAction>
@@ -256,19 +258,18 @@
     background:rgba(0,0,0,0.8);
     display: flex;
     align-items: center;
-    justify-content: center;
     z-index: 1000;
     flex-direction: column;
     .video{
       width: 100%;
-      height: 750rpx;
+      height: calc(100% - 136rpx);
       background: #000;
       z-index: 5;
     }
     .close{
       width: 73rpx;
       height: 73rpx;
-      margin-top: 63rpx;
+      margin-top: 30rpx;
     }
   }
    .video-item{
@@ -281,7 +282,6 @@
     .video-info{
       width:100%;
       height:420rpx;
-      // position: relative;
       z-index: -1;
     }
     .video-img{

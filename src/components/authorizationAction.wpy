@@ -50,7 +50,7 @@
     data = {
       sessionKey: '',
       tag: 1,
-      phoneText: '允许小程序获取您微信绑定的手机号\n 用于五矿信托积分统计'
+      phoneText: '允许小程序获取您微信绑定的手机号'
     }
     computed = {
     }
