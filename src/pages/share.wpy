@@ -77,8 +77,8 @@
             canvas.width = res[0].width * dpr
             canvas.height = res[0].height * dpr
             ctx.scale(dpr, dpr)
-            this.drawText(ctx, this.getPx(296), this.getPx(490), '#000000', 15, this.userinfo.nickname)
             await this.drawFun(canvas, ctx)
+            this.drawText(ctx, this.getPx(296), this.getPx(490), '#000000', 15, this.userinfo.nickname)
             let that = this
             setTimeout(function() {
               wx.hideLoading()
@@ -98,6 +98,7 @@
     daochu(canvas) {
       wx.canvasToTempFilePath({
         canvas: canvas,
+        fileType: 'jpg ',
         success: (res) => {
           this.canvasImg = res.tempFilePath
           this.$apply()
@@ -143,7 +144,7 @@
     // 绘制背景图
     drawRoundRectAvatar(ctx, x, y, w, h, r, imgPath, color) {
       ctx.save()
-      this.drawRoundRect(ctx, x, y, w, h, r, color)
+      this.drawRoundRect(ctx, x, y, w, h, r, '#fff')
       ctx.clip()
       ctx.drawImage(imgPath, x, y, w, h)
       ctx.restore()
