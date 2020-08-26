@@ -10,7 +10,7 @@
         </view>
       </view>
       <view class="video-list-wrap">
-        <van-row gutter="30" >
+        <van-row gutter="15" >
           <van-col span="12" wx:for="{{videoLists}}" wx:key="index">
             <view class="video-item">
               <view class="video-info">
@@ -122,6 +122,11 @@
       showVideo (item) {
         this.videoShow = true
         this.nowVideo = item
+      },
+      scrolltolower() {
+        if (!this.finish) {
+          this.getVideoList()
+        }
       }
     }
     onShareAppMessage(res) {
@@ -142,11 +147,7 @@
       const videoContext = wx.createVideoContext('video' + this.videoIndex, this.$wx)
       videoContext.requestFullScreen()
     }
-    scrolltolower() {
-      if (!this.finish) {
-        this.getVideoList()
-      }
-    }
+  
     getVideoList() {
       wx.showLoading({
         title: '加载中'
@@ -283,10 +284,14 @@
       width:100%;
       height:420rpx;
       z-index: -1;
+      overflow: hidden;
     }
     .video-img{
-      width: 100%;
+      width: 420rpx;
       height: 100%;
+      display: block;
+      object-fit: cover;
+      transform:rotate(90deg);
     }
     .play{
       width: 138rpx;
@@ -303,6 +308,7 @@
       flex-direction: column;
       width: 100%;
       z-index: 10;
+      position: relative;
       .avatar{
         width: 60rpx;
         height: 60rpx;
