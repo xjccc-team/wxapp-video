@@ -1,8 +1,13 @@
 
 <template>
  <view class="container">
+    <view class="cu-custom" style="height:{{CustomBar}}px;position:fixed;left:0;z-index:10">
+      <view class="cu-bar fixed bg-gradual-pink" style="height:{{CustomBar}}px;padding-top:{{StatusBar}}px;">
+        <navigator class='action' open-type="navigateBack" delta="1" hover-class="none">&#xe60b;</navigator>
+      </view>
+    </view>
     <scroll-view scroll-y class="main"	>
-      <image class="top" src="../images/user-top.png" />
+      <image class="top" src="https://www.wingstechnology.cn/mpimage/newimages/user-top.png" />
       <navigator url="/pages/share" class="share" hover-class="none" >去分享</navigator>
       <view class="user-info">
         <image class="avatar" src="{{userinfo.avatarUrl}}" />
@@ -11,23 +16,25 @@
       <block wx:if="{{videoList.length}}">
         <view class="video-list" wx:for="{{videoList}}" wx:key="index">
           <view class="left">
-            <!-- <image src="../images/user-top.png" /> -->
-            <video class="video" initial-time="0" object-fit="cover" autoplay='{{true}}'  src="{{item.videoSrc}}" controls></video>
+            <video class="video" initial-time="0" object-fit="cover" src="{{item.videoSrc}}" controls></video>
           </view>
           <view class="right">
-            <view class="prise" @tap="toPrise({{item}},{{index}})">{{item.praise||'--'}}</view>
+            <view class="{{item.isPraise?'is-prise prise':'prise'}}" @tap="toPrise({{item}},{{index}})">{{item.praise||'--'}}</view>
             <view class="content" wx:if="{{item.status==0}}">审核中……</view>
             <view class="content" wx:if="{{item.status==1}}">审核通过，已发布</view>
-            <view class="content" wx:if="{{item.status==2}}">{{item.refuseReason}}}</view>
-            <view class="time">{{item.time}}</view>
+            <view class="content" wx:if="{{item.status==2}}">{{item.refuseReason}}</view>
+            <view class="footer">
+              <view class="time">{{item.createdOn}} </view>
+              <view class="down" @tap="downloadVideo({{item}})">&#xe723;</view>
+            </view>
           </view>
         </view>
       </block>
 
-       <block wx:if="{{!videoList.length && videoNow.tempFilePath}}">
+       <block wx:if="{{videoNow.tempFilePath}}">
         <view class="video-list" >
           <view class="left">
-            <video class="video" object-fit="cover" initial-time="0" autoplay='{{true}}'  src="{{videoNow.tempFilePath}}" controls></video>
+            <video class="video" object-fit="cover" initial-time="0" src="{{videoNow.tempFilePath}}" controls></video>
           </view>
           <view class="right">
             <view class="submit" @tap="uploadSubmit">提 交</view>
@@ -79,6 +86,9 @@
       disabledStatus: false,
       videoHeight: '',
       objectFit: 'contain',
+      StatusBar: '',
+      CustomBar: '',
+      videoNowUser: {},
       videoList: []
     }
     computed = {
@@ -87,9 +97,11 @@
       toPrise(item, index) {
         if (item.status !== 1) {
           this.showToast('审核通过可点赞')
+        } else if (item.isPraise) {
+          wx.showToast({title: '已点赞', icon: 'none', mask: true, duration: 2000})
         } else {
           XHR.videoPraise({
-            openId: this.openid,
+            openId: this.$parent.globalData.openid,
             videoRecordCode: item.code
           }).then(res => {
             let {message, status} = res.data
@@ -109,10 +121,13 @@
           sourceType: ['album', 'camera'],
           maxDuration: 12,
           camera: 'back',
+          compressed: false,
           success: (res) => {
             if (res.duration > 12) {
               this.showToast('视频超过12s')
             } else {
+              this.videoNowUser = res
+              this.$apply()
               wepy.$store.dispatch({ type: 'VIDEONOW', payload: res })
             }
           }
@@ -122,29 +137,48 @@
         wx.showLoading({
           title: '上传中，请稍后'
         })
+        let videoObjec = this.videoNowUser
+        if (!this.videoNowUser.tempFilePath) {
+          videoObjec = this.videoNow
+        }
+        console.log(videoObjec, this.videoNowUser)
         wx.uploadFile({
-          url: 'https://www.wingstechnology.cn/api-server/video/upload', // 仅为示例，非真实的接口地址
-          filePath: this.videoNow.tempFilePath,
+          url: 'https://www.wingstechnology.cn/api-server/video/upload',
+          filePath: videoObjec.tempFilePath,
           name: 'files',
           formData: {
             'type': 'video',
             openId: this.$parent.globalData.openid,
-            duration: this.videoNow.duration
+            duration: videoObjec.duration
           },
           success: (res) => {
             const data = JSON.parse(res.data)
             wx.hideLoading()
             if (data.status === 3002) {
               let json = {
-                videoSrc: this.videoNow.tempFilePath,
+                videoSrc: videoObjec.tempFilePath,
                 status: 0,
                 time: ''
               }
               this.videoList.push(json)
               this.$apply()
               this.showToast('上传完成审核中')
+              wepy.$store.dispatch({ type: 'VIDEONOW', payload: {} })
             } else {
               wx.showToast({ title: data.message, icon: 'none' })
+            }
+          }
+        })
+      },
+      downloadVideo(item) {
+        wx.showLoading({
+          title: '下载中'
+        })
+        wx.downloadFile({
+          url: item.videoSrc, // 仅为示例，并非真实的资源
+          success: (res) => {
+            if (res.statusCode === 200) {
+              this.saveVideo(res.tempFilePath)
             }
           }
         })
@@ -157,20 +191,6 @@
       }
     }
   
-    downloadImg() {
-      wx.showLoading({
-        title: '下载中'
-      })
-      const time = +new Date()
-      wx.downloadFile({
-        url: `${this.videoSrc}?time=${time}`, // 仅为示例，并非真实的资源
-        success: (res) => {
-          if (res.statusCode === 200) {
-            this.saveVideo(res.tempFilePath)
-          }
-        }
-      })
-    }
     saveVideo(filePath) {
       wx.saveVideoToPhotosAlbum({
         filePath: filePath,
@@ -180,7 +200,6 @@
         },
         fail: res => {
           wx.hideLoading()
-          console.log(res)
         }
       })
     }
@@ -199,16 +218,22 @@
         }
       })
     }
-    playStart() {
-      this.objectFit = 'cover'
-    }
     onLoad () {
-      console.log(this.$parent.globalData.openid)
+      wx.getSystemInfo({
+        success: e => {
+          this.StatusBar = e.statusBarHeight
+          let custom = wx.getMenuButtonBoundingClientRect()
+          this.CustomBar = custom.bottom + custom.top - e.statusBarHeight
+          this.$apply()
+        }
+      })
+      // this.videoNowUser = this.videoNow
+      // this.$apply()
       this.getVideoInfo()
     }
   }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .container{
   text-align: center;
   position: relative;
@@ -316,27 +341,62 @@
         line-height:42rpx;
         color:rgba(0,0,0,1);
         text-align: left;
-        .prise{
+        // .prise{
+        //   margin:38rpx 0;
+        //   &::before{
+        //     width: 31rpx;
+        //     height: 28rpx;
+        //     display: inline-block;
+        //     color:rgba(0,0,0,1);
+        //     content:'';
+        //     margin-right: 12rpx;
+        //     background: url('https://www.wingstechnology.cn/mpimage/no-prise.png') no-repeat;
+        //     background-size: cover;
+        //   }
+        // }
+         .prise{
           margin:38rpx 0;
+          font-size:26rpx;
+          font-weight:bold;
+          text-align: left;
+          display: flex;
+          align-items: center;
           &::before{
-            width: 31rpx;
-            height: 28rpx;
+            width: 49rpx;
+            height: 46rpx;
             display: inline-block;
             color:rgba(0,0,0,1);
             content:'';
             margin-right: 12rpx;
-            background: url('https://www.wingstechnology.cn/mpimage/no-prise.png') no-repeat;
+            background: url('https://www.wingstechnology.cn/mpimage/newImages/no-prise.png') no-repeat;
+            background-size: cover;
+          }
+          &.is-prise:before{
+            width: 49rpx;
+            height: 46rpx;
+            background: url('https://www.wingstechnology.cn/mpimage/newImages/prise.png') no-repeat;
             background-size: cover;
           }
         }
         .content{
          margin-bottom:31rpx;
         }
-        .time{
+        .footer{
           height:33rpx;
           font-size:24rpx;
-          color:rgba(175,175,175,1)
+          color:rgba(175,175,175,1);
+          display: flex;
+          .time{
+            flex:1;
+          }
+          .down{
+            width: 60rpx;
+            height: 60rpx;
+            font-size:32rpx;
+            font-family: 'video';
+          }
         }
+        
       }
     }
     .submit{

@@ -76,6 +76,7 @@
               sourceType: ['album', 'camera'],
               maxDuration: 12,
               camera: 'back',
+              compressed: false,
               success: (res) => {
                 if (res.duration > 12) {
                   this.showToast('视频超过12s')

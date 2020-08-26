@@ -15,7 +15,7 @@
         </view>
       </view>
       <view class="user-phone" wx:if="{{userinfo.openId && !userinfo.mobilePhone}}">
-        <image class="logo" src="../images/auth-brand.png" />
+        <image class="logo" src="https://www.wingstechnology.cn/mpimage/newimages/auth-brand.png" />
         <text>{{phoneText}}</text>
         <view class="footer">
           <button type="default" hover-class="none" class="auth-btn" open-type="getPhoneNumber" plain bindgetphonenumber="bindPhone">手机号授权</button>
@@ -32,6 +32,9 @@
   @connect({
     userinfo (state) {
       return state.counter.userinfo
+    },
+    openid (state) {
+      return state.counter.openid
     }
   })
   export default class AuthorizationAction extends wepy.component {

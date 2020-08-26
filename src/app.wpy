@@ -26,14 +26,15 @@ export default class extends wepy.app {
       navigationBarTextStyle: 'black'
     },
     networkTimeout: {
-      'request': 10000,
-      'downloadFile': 10000
+      'request': 30000,
+      'downloadFile': 30000
     },
     debug: false
   }
 
   globalData = {
-    userInfo: null
+    userInfo: null,
+    openid: ''
   }
 
   constructor () {
@@ -74,6 +75,7 @@ export default class extends wepy.app {
       this.getopenId(res.code)
     } else {
       this.globalData.openid = openid
+      wepy.$store.dispatch({ type: 'OPENID', payload: openid })
       this.queryUser(openid)
     }
   }
@@ -85,9 +87,9 @@ export default class extends wepy.app {
         let {data, status} = res.data
         if (status === 0) {
           wx.setStorageSync('openid', data.openid)
+          this.globalData.openid = data.openid
           wepy.$store.dispatch({ type: 'OPENID', payload: data.openid })
           wx.setStorageSync('sessionKey', data.session_key)
-          this.globalData.openid = data.openid
           this.queryUser(data.openid)
         }
       }
@@ -101,10 +103,9 @@ export default class extends wepy.app {
         let {data, status} = res.data
         data = data || {}
         if (!status) {
-          wepy.$store.dispatch({ type: 'OPENID', payload: data.openId })
           wepy.$store.dispatch({ type: 'USERINFO', payload: data })
           this.globalData.userInfo = data
-          wepy.setStorageSync('userinfo', data)
+          wx.setStorageSync('userinfo', data)
           if (this.employIdCallback) {
             this.employIdCallback(data)
           }
@@ -126,13 +127,20 @@ page{
   align-items: center;
   box-sizing: border-box;
 }
+
 @font-face {
   font-family: 'video';  /* project id 2010712 */
-  src: url('//at.alicdn.com/t/font_2010712_qddmp0xqn6.eot');
-  src: url('//at.alicdn.com/t/font_2010712_qddmp0xqn6.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_2010712_qddmp0xqn6.woff2') format('woff2'),
-  url('//at.alicdn.com/t/font_2010712_qddmp0xqn6.woff') format('woff'),
-  url('//at.alicdn.com/t/font_2010712_qddmp0xqn6.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_2010712_qddmp0xqn6.svg#video') format('svg');
+  src: url('//at.alicdn.com/t/font_2010712_ezfmbiq37df.eot');
+  src: url('//at.alicdn.com/t/font_2010712_ezfmbiq37df.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_2010712_ezfmbiq37df.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_2010712_ezfmbiq37df.woff') format('woff'),
+  url('//at.alicdn.com/t/font_2010712_ezfmbiq37df.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_2010712_ezfmbiq37df.svg#video') format('svg');
+}
+@import (css) "./mixins/colorui";
+.cu-bar .action{
+  color: #fff;
+  font-family: 'video';
+  font-size: 36rpx;
 }
 </style>
