@@ -98,7 +98,6 @@
     daochu(canvas) {
       wx.canvasToTempFilePath({
         canvas: canvas,
-        fileType: 'jpg ',
         success: (res) => {
           this.canvasImg = res.tempFilePath
           this.$apply()
@@ -128,7 +127,7 @@
     }
     async drawFun(canvas, ctx) {
       await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/share-bg.png').then(img => {
-        this.drawRoundRectAvatar(ctx, 0, 0, this.getPx(592), this.getPx(1166), 1, img)
+        this.drawRoundRectAvatar(ctx, 0, 0, this.getPx(592), this.getPx(1166), 1, img, '#fff')
       })
       await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/newImages/share-text.png').then(img => {
         this.drawRoundRectAvatar(ctx, this.getPx(42), this.getPx(557), this.getPx(514), this.getPx(204), 1, img)
@@ -144,7 +143,7 @@
     // 绘制背景图
     drawRoundRectAvatar(ctx, x, y, w, h, r, imgPath, color) {
       ctx.save()
-      this.drawRoundRect(ctx, x, y, w, h, r, '#fff')
+      this.drawRoundRect(ctx, x, y, w, h, r, color)
       ctx.clip()
       ctx.drawImage(imgPath, x, y, w, h)
       ctx.restore()
