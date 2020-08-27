@@ -130,14 +130,14 @@
         this.drawRoundRectAvatar(ctx, 0, 0, this.getPx(592), this.getPx(1166), 1, img, '#fff')
       })
       await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/newImages/share-text.png').then(img => {
-        this.drawRoundRectAvatar(ctx, this.getPx(42), this.getPx(557), this.getPx(514), this.getPx(204), 1, img)
+        this.drawRoundRectAvatar(ctx, this.getPx(42), this.getPx(516), this.getPx(514), this.getPx(204), 1, img)
       })
       await this.downloadImage(canvas, this.userinfo.avatarUrl).then(img => {
         this.drawRoundRectAvatar(ctx, this.getPx(240), this.getPx(324), this.getPx(120), this.getPx(120), this.getPx(60), img)
       })
   
       await this.downloadImage(canvas, 'https://www.wingstechnology.cn/mpimage/share-img.png').then(img => {
-        this.drawRoundRectAvatar(ctx, this.getPx(218), this.getPx(791), this.getPx(198), this.getPx(302), 1, img)
+        this.drawRoundRectAvatar(ctx, this.getPx(218), this.getPx(750), this.getPx(198), this.getPx(302), 1, img)
       })
     }
     // 绘制背景图
