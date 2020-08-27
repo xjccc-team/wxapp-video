@@ -121,11 +121,8 @@
         })
       },
       deleteNowVideo(item, index) {
-        let arr = []
-        if (this.videoNow.length !== 1) {
-          arr = this.videoNow.splice(index, 1)
-        }
-        wepy.$store.dispatch({ type: 'VIDEONOW', payload: arr })
+        this.videoNow.splice(index, 1)
+        wepy.$store.dispatch({ type: 'VIDEONOW', payload: this.videoNow })
       },
       toPrise(item, index) {
         if (item.status !== 1) {
@@ -160,7 +157,7 @@
           camera: 'back',
           compressed: false,
           success: (res) => {
-            const arr = [this.videoNow, ...[res]]
+            const arr = [...this.videoNow, ...[res]]
             wepy.$store.dispatch({ type: 'VIDEONOW', payload: arr })
           }
         })
@@ -217,11 +214,8 @@
           this.videoList.push(json)
           this.$apply()
           this.showToast('上传完成审核中')
-          let arr = []
-          if (this.videoNow.length !== 1) {
-            arr = this.videoNow.splice(index, 1)
-          }
-          wepy.$store.dispatch({ type: 'VIDEONOW', payload: arr })
+          this.videoNow.splice(index, 1)
+          wepy.$store.dispatch({ type: 'VIDEONOW', payload: this.videoNow })
         } else {
           wx.showToast({ title: data.message, icon: 'none' })
         }

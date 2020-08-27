@@ -78,6 +78,8 @@
             canvas.height = res[0].height * dpr
             ctx.scale(dpr, dpr)
             await this.drawFun(canvas, ctx)
+            this.drawText(ctx, this.getPx(296), this.getPx(140), '#fff', this.getPx(50), '十 年 薪 火')
+            this.drawText(ctx, this.getPx(296), this.getPx(206), '#fff', this.getPx(50), '百 年 承 托')
             this.drawText(ctx, this.getPx(296), this.getPx(490), '#000000', 15, this.userinfo.nickname)
             let that = this
             setTimeout(function() {
