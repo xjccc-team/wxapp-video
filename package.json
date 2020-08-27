@@ -17,6 +17,7 @@
   "author": "小辉呵呵 <shanghui.yu@360che.com>",
   "license": "MIT",
   "dependencies": {
+    "cos-wx-sdk-v5": "^0.7.10",
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
     "redux-promise": "^0.5.3",

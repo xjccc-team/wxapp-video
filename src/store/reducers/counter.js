@@ -7,7 +7,7 @@ const defaulState = {
   isIpx: false,
   userinfo: {},
   openid: '',
-  videoNow: {} // 本地上传视频返回的路径
+  videoNow: [] // 本地上传视频返回的路径
 }
 
 export default handleActions({
@@ -48,6 +48,8 @@ export default handleActions({
     }
   },
   [VIDEONOW] (state, action) {
+    console.log(action.payload)
+
     return {
       ...state,
       videoNow: action.payload

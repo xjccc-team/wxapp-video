@@ -50,7 +50,7 @@
     }
     onShareAppMessage(res) {
       return {
-        title: '让我们一起为五矿加油',
+        title: '一起为五矿十周年加油',
         path: '/pages/index'
       }
     }
@@ -66,7 +66,9 @@
         }
       },
       toMap() {
-        this.showToast('敬请期待')
+        wx.navigateTo({
+          url: '/pages/map'
+        })
       }
     }
     events = {

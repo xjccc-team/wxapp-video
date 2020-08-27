@@ -8,7 +8,7 @@
      <view class="item to-video" @tap="switchTabs(0)">
        <image src='../images/canma-select.png' />
        <view class="img"></view>
-       <view class="text">上传视频</view>
+       <view class="text">录制视频</view>
      </view>
      <view class="item" @tap="switchTabs(2)">
        <image wx:if="{{active==2}}" src='../images/me-select.png' />
@@ -21,7 +21,11 @@
   import wepy from 'wepy'
   import testMixin from '../mixins/test'
   import { connect } from 'wepy-redux'
+  
   @connect({
+    videoNow (state) {
+      return state.counter.videoNow
+    },
     userinfo (state) {
       return state.counter.userinfo
     }
@@ -74,19 +78,16 @@
           default:
             wx.chooseVideo({
               sourceType: ['album', 'camera'],
-              maxDuration: 12,
+              maxDuration: 60,
               camera: 'back',
               compressed: false,
               success: (res) => {
-                if (res.duration > 12) {
-                  this.showToast('视频超过12s')
-                } else {
-                  wepy.$store.dispatch({ type: 'VIDEONOW', payload: res })
-                  if (this.active !== '2') {
-                    wx.navigateTo({
-                      url: '/pages/user'
-                    })
-                  }
+                const video = [...this.videoNow, ...[res]]
+                wepy.$store.dispatch({ type: 'VIDEONOW', payload: video })
+                if (this.active !== '2') {
+                  wx.navigateTo({
+                    url: '/pages/user'
+                  })
                 }
               }
             })
@@ -111,6 +112,7 @@
     }
 
     onLoad() {
+  
     }
   }
 </script>

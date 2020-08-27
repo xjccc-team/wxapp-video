@@ -17,6 +17,7 @@ export default class extends wepy.app {
       'pages/index',
       'pages/list',
       'pages/share',
+      'pages/map',
       'pages/user'
     ],
     window: {

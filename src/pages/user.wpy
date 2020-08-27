@@ -16,10 +16,12 @@
       <block wx:if="{{videoList.length}}">
         <view class="video-list" wx:for="{{videoList}}" wx:key="index">
           <view class="left">
-            <video class="video" initial-time="0" object-fit="cover" src="{{item.videoSrc}}" controls></video>
+            <image class="video-img" wx:if="{{videoIndex!=index}}" mode="aspectFill" src="{{item.imageSrc}}" />
+            <image class="play" wx:if="{{videoIndex!=index}}" @tap="showVideo({{index}})" src="../images/paly.png" />
+            <video class="video" wx:if="{{videoIndex==index}}" initial-time="0" autoplay='{{true}}'  object-fit="cover" src="{{item.videoSrc}}" controls></video>
           </view>
           <view class="right">
-            <view class="{{item.isPraise?'is-prise prise':'prise'}}" @tap="toPrise({{item}},{{index}})">{{item.praise||'--'}}</view>
+            <view class="{{item.isPraise?'is-prise prise':'prise'}}" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
             <view class="content" wx:if="{{item.status==0}}">审核中……</view>
             <view class="content" wx:if="{{item.status==1}}">审核通过，已发布</view>
             <view class="content" wx:if="{{item.status==2}}">{{item.refuseReason}}</view>
@@ -28,25 +30,29 @@
               <view class="down" @tap="downloadVideo({{item}})">&#xe723;</view>
             </view>
           </view>
+          <image class="delete" @tap="deleteVideo({{item}},{{index}})" src="../images/delete.png" />
         </view>
       </block>
 
-       <block wx:if="{{videoNow.tempFilePath}}">
-        <view class="video-list" >
+       <block wx:if="{{videoNow.length}}">
+        <view class="video-list" wx:for="{{videoNow}}" wx:key="index">
           <view class="left">
-            <video class="video" object-fit="cover" initial-time="0" src="{{videoNow.tempFilePath}}" controls></video>
+            <image class="video-img" wx:if="{{videoNowIndex!=index}}" mode="aspectFill" src="{{item.thumbTempFilePath}}" />
+            <image class="play" wx:if="{{videoNowIndex!=index}}" @tap="showNowVideo({{index}})" src="../images/paly.png" />
+            <video class="video" wx:if="{{videoNowIndex==index}}" autoplay='{{true}}' object-fit="cover" initial-time="0" src="{{item.tempFilePath}}" controls></video>
           </view>
           <view class="right">
-            <view class="submit" @tap="uploadSubmit">提 交</view>
+            <view class="submit" @tap="uploadSubmit({{item}},{{index}})">提 交</view>
           </view>
+          <image class="delete" @tap="deleteNowVideo({{item}},{{index}})" src="../images/delete.png" />
         </view>
       </block>
 
-      <view wx:if="{{!videoList.length && !videoNow.tempFilePath}}" class="video-list no-video" @tap="choseVideo">
+      <view wx:if="{{!videoList.length && !videoNow.length}}" class="video-list no-video" @tap="choseVideo">
         <image src="../images/canma-select.png" />
         <text class="des">上传你的视频</text>
       </view>
-      <view wx:if="{{!videoList.length && !videoNow.tempFilePath}}" class="no-video-text">还没有完成加油视频录制哦</view>
+      <view wx:if="{{!videoList.length && !videoNow.length}}" class="no-video-text">还没有完成加油视频录制哦</view>
     </scroll-view>
     <!-- 模拟tabbar -->
    <tabBars active="2"></tabBars> 
@@ -60,7 +66,7 @@
   import { connect } from 'wepy-redux'
   import XHR from '../api/'
   import TabBars from '../components/tabBars'
-
+  var uploadVideo = require('../utils/videoUpload')
   @connect({
     videoNow (state) {
       return state.counter.videoNow
@@ -80,26 +86,46 @@
     }
     mixins = [testMixin]
     data = {
-      imageSrc: '',
-      status: null,
-      refuseReason: '',
-      disabledStatus: false,
-      videoHeight: '',
-      objectFit: 'contain',
       StatusBar: '',
       CustomBar: '',
       videoNowUser: {},
       videoList: [],
-      submitStatus: false
+      submitStatus: false,
+      videoIndex: null,
+      videoNowIndex: null
     }
     computed = {
     }
     methods = {
+      showVideo(index) {
+        this.videoNowIndex = null
+        this.videoIndex = index
+      },
+      showNowVideo(index) {
+        this.videoIndex = null
+        this.videoNowIndex = index
+      },
+      deleteVideo(item, index) {
+        XHR.delVideo({
+          code: item.code
+        }).then(res => {
+          let {message, status} = res.data
+          if (status === 0) {
+            this.showToast('删除成功')
+            this.videoList.splice(index, 1)
+            this.$apply()
+          } else {
+            wx.showToast({title: message, icon: 'none', duration: 2000})
+          }
+        })
+      },
+      deleteNowVideo(item, index) {
+        const arr = this.videoNow.splice(index, 1)
+        wepy.$store.dispatch({ type: 'VIDEONOW', payload: arr })
+      },
       toPrise(item, index) {
         if (item.status !== 1) {
           this.showToast('审核通过可点赞')
-        } else if (item.isPraise) {
-          wx.showToast({title: '已点赞', icon: 'none', mask: true, duration: 2000})
         } else {
           XHR.videoPraise({
             openId: this.$parent.globalData.openid,
@@ -107,10 +133,15 @@
           }).then(res => {
             let {message, status} = res.data
             if (status === 0) {
-              this.videoList[index].praise++
-              this.videoList[index].isPraise = true
+              if (!item.isPraise) {
+                this.videoList[index].praise++
+                this.videoList[index].isPraise = true
+                wx.showToast({title: '点赞成功', icon: 'none', mask: true, duration: 2000})
+              } else {
+                this.videoList[index].praise--
+                this.videoList[index].isPraise = false
+              }
               this.$apply()
-              wx.showToast({title: '点赞成功', icon: 'none', mask: true, duration: 2000})
             } else {
               wx.showToast({title: message, icon: 'none', duration: 2000})
             }
@@ -120,21 +151,16 @@
       choseVideo () {
         wx.chooseVideo({
           sourceType: ['album', 'camera'],
-          maxDuration: 12,
+          maxDuration: 60,
           camera: 'back',
           compressed: false,
           success: (res) => {
-            if (res.duration > 12) {
-              this.showToast('视频超过12s')
-            } else {
-              this.videoNowUser = res
-              this.$apply()
-              wepy.$store.dispatch({ type: 'VIDEONOW', payload: res })
-            }
+            const arr = [this.videoNow, ...[res]]
+            wepy.$store.dispatch({ type: 'VIDEONOW', payload: arr })
           }
         })
       },
-      uploadSubmit() {
+      async uploadSubmit(item, index) {
         if (this.submitStatus) {
           return
         }
@@ -142,38 +168,8 @@
         wx.showLoading({
           title: '上传中，请稍后'
         })
-        let videoObjec = this.videoNowUser
-        if (!this.videoNowUser.tempFilePath) {
-          videoObjec = this.videoNow
-        }
-        wx.uploadFile({
-          url: 'https://www.wingstechnology.cn/api-server/video/upload',
-          filePath: videoObjec.tempFilePath,
-          name: 'files',
-          formData: {
-            'type': 'video',
-            openId: this.$parent.globalData.openid,
-            duration: videoObjec.duration
-          },
-          success: (res) => {
-            const data = JSON.parse(res.data)
-            wx.hideLoading()
-            this.submitStatus = false
-            if (data.status === 3002) {
-              let json = {
-                videoSrc: videoObjec.tempFilePath,
-                status: 0,
-                time: ''
-              }
-              this.videoList.push(json)
-              this.$apply()
-              this.showToast('上传完成审核中')
-              wepy.$store.dispatch({ type: 'VIDEONOW', payload: {} })
-            } else {
-              wx.showToast({ title: data.message, icon: 'none' })
-            }
-          }
-        })
+        let res = await uploadVideo(item.tempFilePath)
+        this.videoUploadMake(item, res, index)
       },
       downloadVideo(item) {
         wx.showLoading({
@@ -195,7 +191,34 @@
         console.log(args)
       }
     }
-  
+    videoUploadMake(videoObjec, res, index) {
+      XHR.uploadMake({
+        'type': 'video',
+        openId: this.$parent.globalData.openid,
+        duration: videoObjec.duration,
+        fileName: res.filename
+
+      }).then(res => {
+        const data = res.data
+        wx.hideLoading()
+        this.submitStatus = false
+        if (data.status === 3002) {
+          let json = {
+            videoSrc: videoObjec.tempFilePath,
+            imageSrc: videoObjec.thumbTempFilePath,
+            status: 0,
+            createdOn: ''
+          }
+          this.videoList.push(json)
+          this.$apply()
+          this.showToast('上传完成审核中')
+          const arr = this.videoNow.splice(index, 1)
+          wepy.$store.dispatch({ type: 'VIDEONOW', payload: arr })
+        } else {
+          wx.showToast({ title: data.message, icon: 'none' })
+        }
+      })
+    }
     saveVideo(filePath) {
       wx.saveVideoToPhotosAlbum({
         filePath: filePath,
@@ -232,8 +255,6 @@
           this.$apply()
         }
       })
-      // this.videoNowUser = this.videoNow
-      // this.$apply()
       this.getVideoInfo()
     }
   }
@@ -310,6 +331,16 @@
       box-shadow:0px 10rpx 20rpx rgba(0,0,0,0.1);
       border-radius:10rpx;
       display: flex;
+      position: relative;
+      .delete{
+        width: 30rpx;
+        height: 38rpx;
+        padding: 30rpx;
+        position: absolute;
+        right: 0;
+        top: 0;
+        z-index: 10;
+      }
       &.no-video{
         padding: 59rpx 30rpx 19rpx 32rpx;
         line-height: 280rpx;
@@ -337,6 +368,15 @@
           width: 100%;
           height: 100%;
         }
+        .play{
+          width: 138rpx;
+          height: 138rpx;
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%,-50%);
+          z-index: 5;
+        }
       }
       .right{
         flex: 1;
@@ -347,19 +387,6 @@
         color:rgba(0,0,0,1);
         text-align: left;
         position: relative;
-        // .prise{
-        //   margin:38rpx 0;
-        //   &::before{
-        //     width: 31rpx;
-        //     height: 28rpx;
-        //     display: inline-block;
-        //     color:rgba(0,0,0,1);
-        //     content:'';
-        //     margin-right: 12rpx;
-        //     background: url('https://www.wingstechnology.cn/mpimage/no-prise.png') no-repeat;
-        //     background-size: cover;
-        //   }
-        // }
          .prise{
           margin:38rpx 0;
           font-size:26rpx;

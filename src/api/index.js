@@ -70,6 +70,20 @@ class XHR {
       type: 'POST'
     })
   }
+  uploadMake (json) { // 视频制作
+    return fetch({
+      url: `${fetch.URLS}/video/uploadMake`,
+      body: json,
+      type: 'POST'
+    })
+  }
+  delVideo (json) { // 删除视频
+    return fetch({
+      url: `${fetch.URLS}/admin/video/del`,
+      body: json,
+      type: 'GET'
+    })
+  }
 }
 
 export default new XHR()
