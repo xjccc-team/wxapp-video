@@ -288,6 +288,7 @@
       height:420rpx;
       z-index: -1;
       overflow: hidden;
+      position: relative;
     }
     .video-img{
       width: 100%;
