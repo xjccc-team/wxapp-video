@@ -28,7 +28,7 @@
             <view class="content" wx:if="{{item.status==2}}">{{item.refuseReason}}</view>
             <view class="footer">
               <view class="time">{{item.createdOn}} </view>
-              <view class="down" @tap="downloadVideo({{item}})">&#xe723;</view>
+              <view class="down" wx:if="{{item.status==1}}" @tap="downloadVideo({{item}})">&#xe723;</view>
             </view>
           </view>
           <image class="delete" @tap="deleteVideo({{item}},{{index}})" src="../images/delete.png" />
