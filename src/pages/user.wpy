@@ -16,7 +16,8 @@
       <block wx:if="{{videoList.length}}">
         <view class="video-list" wx:for="{{videoList}}" wx:key="index">
           <view class="left">
-            <image class="video-img" wx:if="{{videoIndex!=index}}" mode="aspectFill" src="{{item.imageSrc}}" />
+            <image class="video-img" wx:if="{{videoIndex!=index&&item.imageSrc}}" mode="aspectFill" src="{{item.imageSrc}}" />
+            <image class="video-img no-pass" wx:if="{{videoIndex!=index&&!item.imageSrc}}" src="../images/video-img.jpg" />
             <image class="play" wx:if="{{videoIndex!=index}}" @tap="showVideo({{index}})" src="../images/paly.png" />
             <video class="video" wx:if="{{videoIndex==index}}" initial-time="0" autoplay='{{true}}'  object-fit="cover" src="{{item.videoSrc}}" controls></video>
           </view>
@@ -37,7 +38,7 @@
        <block wx:if="{{videoNow.length}}">
         <view class="video-list" wx:for="{{videoNow}}" wx:key="index">
           <view class="left">
-            <image class="video-img" wx:if="{{videoNowIndex!=index}}" mode="aspectFill" src="{{item.thumbTempFilePath}}" />
+            <image class="video-img no-pass" wx:if="{{videoNowIndex!=index}}" src="../images/video-img.jpg" />
             <image class="play" wx:if="{{videoNowIndex!=index}}" @tap="showNowVideo({{index}})" src="../images/paly.png" />
             <video class="video" wx:if="{{videoNowIndex==index}}" autoplay='{{true}}' object-fit="cover" initial-time="0" src="{{item.tempFilePath}}" controls></video>
           </view>
@@ -120,7 +121,10 @@
         })
       },
       deleteNowVideo(item, index) {
-        const arr = this.videoNow.splice(index, 1)
+        let arr = []
+        if (index !== 0) {
+          arr = this.videoNow.splice(index, 1)
+        }
         wepy.$store.dispatch({ type: 'VIDEONOW', payload: arr })
       },
       toPrise(item, index) {
@@ -140,6 +144,7 @@
               } else {
                 this.videoList[index].praise--
                 this.videoList[index].isPraise = false
+                wx.showToast({title: '取消点赞', icon: 'none', mask: true, duration: 2000})
               }
               this.$apply()
             } else {
@@ -205,14 +210,17 @@
         if (data.status === 3002) {
           let json = {
             videoSrc: videoObjec.tempFilePath,
-            imageSrc: videoObjec.thumbTempFilePath,
+            imageSrc: null,
             status: 0,
             createdOn: ''
           }
           this.videoList.push(json)
           this.$apply()
           this.showToast('上传完成审核中')
-          const arr = this.videoNow.splice(index, 1)
+          let arr = []
+          if (index !== 0) {
+            arr = this.videoNow.splice(index, 1)
+          }
           wepy.$store.dispatch({ type: 'VIDEONOW', payload: arr })
         } else {
           wx.showToast({ title: data.message, icon: 'none' })
@@ -367,6 +375,11 @@
         .video{
           width: 100%;
           height: 100%;
+        }
+        .no-pass{
+           width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
         .play{
           width: 138rpx;

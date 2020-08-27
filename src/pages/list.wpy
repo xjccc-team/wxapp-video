@@ -95,13 +95,15 @@
         }).then(res => {
           let {message, status} = res.data
           if (status === 0) {
+            console.log(item.isPraise)
             if (!item.isPraise) {
-              this.videoList[index].praise++
-              this.videoList[index].isPraise = true
+              this.videoLists[index].praise++
+              this.videoLists[index].isPraise = true
               wx.showToast({title: '点赞成功', icon: 'none', mask: true, duration: 2000})
             } else {
-              this.videoList[index].praise--
-              this.videoList[index].isPraise = false
+              this.videoLists[index].praise--
+              this.videoLists[index].isPraise = false
+              wx.showToast({title: '取消点赞', icon: 'none', mask: true, duration: 2000})
             }
             this.$apply()
           } else {

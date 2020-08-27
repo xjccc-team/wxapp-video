@@ -1,7 +1,7 @@
 
 <template>
  <view class="container">
-   <image class="map" mode="aspectFit" src="https://www.wingstechnology.cn/mpimage/newimages/map.jpg" />
+   <image class="map"  src="https://www.wingstechnology.cn/mpimage/newimages/map.jpg" />
   </view>
 </template>
 
