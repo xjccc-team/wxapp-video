@@ -16,8 +16,8 @@
       <block wx:if="{{videoList.length}}">
         <view class="video-list" wx:for="{{videoList}}" wx:key="index">
           <view class="left">
-            <image class="video-img" wx:if="{{videoIndex!=index&&item.imageSrc}}" mode="aspectFill" src="{{item.imageSrc}}" />
-            <image class="video-img no-pass" wx:if="{{videoIndex!=index&&!item.imageSrc}}" src="../images/video-img.jpg" />
+            <image class="video-img" wx:if="{{videoIndex!=index && item.status==1}}" mode="aspectFill" src="{{item.imageSrc}}" />
+            <image class="video-img no-pass" wx:if="{{videoIndex!=index && item.status!=1}}" src="../images/video-img.jpg" />
             <image class="play" wx:if="{{videoIndex!=index}}" @tap="showVideo({{index}})" src="../images/paly.png" />
             <video class="video" wx:if="{{videoIndex==index}}" initial-time="0" autoplay='{{true}}'  object-fit="cover" src="{{item.videoSrc}}" controls></video>
           </view>
