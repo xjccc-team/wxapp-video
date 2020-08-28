@@ -6,7 +6,8 @@
        <view class="text">加油广场</view>
      </view>
      <view class="item to-video" @tap="switchTabs(0)">
-       <image src='../images/canma-select.png' />
+       <image wx:if="{{isLine==0}}" src='../images/uploadVideo.jpg' />
+       <image wx:else src='../images/canma-select.png' />
        <view class="img"></view>
        <view class="text">录制视频</view>
      </view>
@@ -25,6 +26,9 @@
   @connect({
     videoNow (state) {
       return state.counter.videoNow
+    },
+    isLine (state) {
+      return state.counter.isLine
     },
     userinfo (state) {
       return state.counter.userinfo
