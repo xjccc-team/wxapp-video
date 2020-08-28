@@ -18,7 +18,7 @@
           <view class="left">
             <image class="video-img" wx:if="{{videoIndex!=index && item.status==1}}" mode="aspectFill" src="{{item.imageSrc}}" />
             <image class="video-img no-pass" wx:if="{{videoIndex!=index && item.status!=1}}" src="../images/video-img.jpg" />
-            <image class="play" wx:if="{{videoIndex!=index}}" @tap="showVideo({{index}})" src="../images/paly.png" />
+            <image class="play" wx:if="{{videoIndex!=index && isLine}}" @tap="showVideo({{index}})" src="../images/paly.png" />
             <video class="video" wx:if="{{videoIndex==index}}" initial-time="0" autoplay='{{true}}'  object-fit="cover" src="{{item.videoSrc}}" controls></video>
           </view>
           <view class="right">
@@ -39,7 +39,7 @@
         <view class="video-list" wx:for="{{videoNow}}" wx:key="index">
           <view class="left">
             <image class="video-img no-pass" wx:if="{{videoNowIndex!=index}}" src="../images/video-img.jpg" />
-            <image class="play" wx:if="{{videoNowIndex!=index}}" @tap="showNowVideo({{index}})" src="../images/paly.png" />
+            <image class="play" wx:if="{{videoNowIndex!=index && isLine}}" @tap="showNowVideo({{index}})" src="../images/paly.png" />
             <video class="video" wx:if="{{videoNowIndex==index}}" autoplay='{{true}}' object-fit="cover" initial-time="0" src="{{item.tempFilePath}}" controls></video>
           </view>
           <view class="right">
@@ -71,6 +71,9 @@
   @connect({
     videoNow (state) {
       return state.counter.videoNow
+    },
+    isLine (state) {
+      return state.counter.isLine
     },
     userinfo (state) {
       return state.counter.userinfo
