@@ -3,7 +3,7 @@
  <view class="container">
     <scroll-view scroll-y class="main" @scrolltolower="scrolltolower"	>
       <view class="header-wrap">
-        <text class="title">点赞喜欢的视频</text>
+        <text class="title">点赞喜欢的{{isLine?'视频':'图片'}}</text>
         <view class="right">
           <view class="{{order==0?'select btn':'btn'}}" @tap="tabsVideo(0)">按时间</view>
           <view class="{{order==1?'select btn':'btn'}}" @tap="tabsVideo(1)">按赞数</view>
@@ -15,7 +15,7 @@
             <view class="video-item">
               <view class="video-info" bindtap="toDetail({{item}})">
                 <image class="video-img" mode="aspectFill" src="{{item.imageSrc}}" />
-                <image class="play" src="../images/paly.png" />
+                <image class="play" wx:if="{{isLine}}" src="../images/paly.png" />
               </view>
               <view class="user-wrap">
                 <image class="avatar" src="{{item.headImageUrl}}" />
@@ -53,6 +53,9 @@
   @connect({
     openid (state) {
       return state.counter.openid
+    },
+    isLine (state) {
+      return state.counter.isLine
     }
   })
   
@@ -132,6 +135,7 @@
         }
       },
       toDetail(item) {
+        wx.setStorageSync('videoDetail', item)
         wx.navigateTo({
           url: `/pages/videoDetail?detail=${item}`
         })

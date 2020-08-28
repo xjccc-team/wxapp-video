@@ -11,3 +11,5 @@ export const USERINFO = 'USERINFO'
 export const OPENID = 'OPENID'
 
 export const VIDEONOW = 'VIDEONOW'
+
+export const ISLINE = 'ISLINE'

@@ -5,16 +5,17 @@
      <image class="avatar" mode="aspectFill" src="{{detail.headImageUrl}}" />
      <view class="info">
        <view class="name">{{detail.nickname}}</view>
-       <view class="footer">{{showFooter}}</view>
+       <view class="footer">{{topFooter}}</view>
      </view>
    </view>
-   <view>
-     <video class="video" initial-time="0" autoplay='{{true}}'  object-fit="cover" src="{{detail.videoSrc}}" controls></video>
-     <text>快来和我一起为五矿信托十周年加油祝福吧！</text>
+   <view class="video-wrap">
+     <image class="img" wx:if="{{!isLine}}" src="{{detail.imageSrc}}" />
+     <video class="video" wx:else initial-time="0" autoplay='{{true}}'  object-fit="cover" src="{{detail.videoSrc}}" controls></video>
+     <text class="des">快来和我一起为五矿信托十周年加油祝福吧！</text>
    </view>
    <view class="footer-global">
-     <view class="{{item.isPraise?'is-prise prise':'prise'}}" @tap="toPrise">{{detail.praise}}</view>
-     <view>分享</view>
+     <view class="{{detail.isPraise?'is-prise prise':'prise'}}" @tap="toPrise">{{detail.praise}}</view>
+    <button  hover-class="none" class="share" data-url="{{item.imageSrc}}" open-type="share" plain >分享</button>
    </view>
   </view>
 </template>
@@ -25,6 +26,9 @@
   import { connect } from 'wepy-redux'
   import XHR from '../api/'
   @connect({
+    isLine (state) {
+      return state.counter.isLine
+    },
     userinfo (state) {
       return state.counter.userinfo
     }
@@ -40,7 +44,8 @@
     mixins = [testMixin]
     data = {
       tags: ['其他', '公司员工', '公司客户', '合作伙伴'],
-      detail: {}
+      detail: {},
+      topFooter: ''
     }
     computed = {
     }
@@ -75,30 +80,37 @@
             wx.showToast({title: message, icon: 'none', duration: 2000})
           }
         })
-      },
-      showFooter() {
-        return this.tags[this.detail.tag] + ' ' + this.detail.createdOn
       }
+    }
+    showFooter() {
+      return this.tags[this.detail.tag] + ' ' + this.detail.createdOn
     }
     events = {
     }
     onLoad (option) {
-      this.detail = option.detail
-      console.log(option.detail)
+      this.detail = wx.getStorageSync('videoDetail')
+      wx.setNavigationBarTitle({
+        title: this.detail.nickname
+      })
+      this.topFooter = this.showFooter()
     }
   }
 </script>
 <style lang="less" scoped>
 .container{
-  text-align: center;
   position: relative;
   background: #000;
+  align-items: center;
   .header{
-    padding: 42rpx auto 45rpx 54rpx;
+    padding: 42rpx 54rpx 45rpx 54rpx;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
     .avatar{
       width: 70rpx;
       height: 70rpx;
       border-radius: 50%;
+      margin-right: 26rpx;
     }
     .info{
       display: flex;
@@ -119,9 +131,20 @@
     }
   }
   .video-wrap{
+    flex: 1;
+    width: 100%;
+    padding:0 80rpx;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     video{
-      width: 588rpx;
-      height: 1049rpx;
+      flex:1;
+      width: 100%;
+    }
+    .img{
+      width: 100%;
+      height: 100%;
     }
     .des{
       height: 33rpx;
@@ -136,8 +159,12 @@
     height: 42rpx;
     font-size: 30rpx;
     font-weight: bold;
-    line-height: 42rpx;
     color: #FFFFFF;
+    padding: 40rpx 50rpx 146rpx;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    align-items: center;
     .prise{
       display: inline-flex;
       align-items: center;
@@ -159,12 +186,23 @@
       }
     }
     .share{
-      margin-left:56rpx; 
-      width: 50rpx;
-      height: 50rpx;
+      display: inline-flex;
+      margin-left:56rpx;
       border:none !important;
-      background: url('https://www.wingstechnology.cn/mpimage/share-icon.png') no-repeat;
-      background-size: cover;
+      height: 50rpx;
+      align-items: center;
+      font-size: 30rpx;
+      color: #FFFFFF;
+      padding: 0;
+      &::before{
+        content:'';
+        background: url('https://www.wingstechnology.cn/mpimage/newImages/share-detail.png') no-repeat;
+        background-size: cover;
+         width: 50rpx;
+        height: 50rpx;
+        display: inline-block;
+      }
+      
     }
   }
 }

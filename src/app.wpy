@@ -92,6 +92,7 @@ export default class extends wepy.app {
           this.globalData.openid = data.openid
           wepy.$store.dispatch({ type: 'OPENID', payload: data.openid })
           wx.setStorageSync('sessionKey', data.session_key)
+          wepy.$store.dispatch({ type: 'ISLINE', payload: res.data.isLine })
           this.queryUser(data.openid)
         }
       }
@@ -106,6 +107,7 @@ export default class extends wepy.app {
         data = data || {}
         if (!status) {
           wepy.$store.dispatch({ type: 'USERINFO', payload: data })
+          wepy.$store.dispatch({ type: 'ISLINE', payload: res.data.isLine })
           this.globalData.userInfo = data
           wx.setStorageSync('userinfo', data)
           if (this.employIdCallback) {
