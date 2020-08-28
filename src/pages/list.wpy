@@ -13,9 +13,9 @@
         <van-row gutter="15" >
           <van-col span="12" wx:for="{{videoLists}}" wx:key="index">
             <view class="video-item">
-              <view class="video-info">
+              <view class="video-info" bindtap="toDetail({{item}})">
                 <image class="video-img" mode="aspectFill" src="{{item.imageSrc}}" />
-                <image class="play" bindtap="showVideo({{item}})" src="../images/paly.png" />
+                <image class="play" src="../images/paly.png" />
               </view>
               <view class="user-wrap">
                 <image class="avatar" src="{{item.headImageUrl}}" />
@@ -130,6 +130,11 @@
         if (!this.finish) {
           this.getVideoList()
         }
+      },
+      toDetail(item) {
+        wx.navigateTo({
+          url: `/pages/videoDetail?detail=${item}`
+        })
       }
     }
     onShareAppMessage(res) {
