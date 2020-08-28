@@ -9,7 +9,7 @@
        <image wx:if="{{isLine==0}}" src='../images/uploadVideo.jpg' />
        <image wx:else src='../images/canma-select.png' />
        <view class="img"></view>
-       <view class="text">录制视频</view>
+       <view class="text">{{isLine==0?'上传':'录制视频'}}</view>
      </view>
      <view class="item" @tap="switchTabs(2)">
        <image wx:if="{{active==2}}" src='../images/me-select.png' />
