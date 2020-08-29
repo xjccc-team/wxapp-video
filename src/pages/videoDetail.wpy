@@ -54,7 +54,7 @@
         return {
           title: '一起为五矿十周年加油',
           imageUrl: this.detail.imageSrc,
-          path: '/pages/list'
+          path: '/pages/index'
         }
       }
     }
