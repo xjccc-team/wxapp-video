@@ -23,7 +23,8 @@
               </view>
               <view class="footer">
                 <view class="{{item.isPraise?'is-prise prise':'prise'}}" @tap="toPrise({{item}},{{index}})">{{item.praise}}</view>
-                <button  hover-class="none" class="share" data-url="{{item.imageSrc}}" open-type="share" plain >转发</button>
+                <!-- <button  hover-class="none" class="share" bindtap="toDetail({{item}})" data-url="{{item.imageSrc}}"  plain >转发</button> -->
+                <button  hover-class="none" class="share" data-code="{{item.code}}" data-url="{{item.imageSrc}}" open-type="share" plain >转发</button>
               </view>
             </view>
           </van-col>
@@ -145,7 +146,7 @@
         return {
           title: '一起为五矿十周年加油',
           imageUrl: res.target.dataset.url,
-          path: '/pages/list'
+          path: `/pages/videoDetail?code=${res.target.dataset.code}`
         }
       }
       return {
