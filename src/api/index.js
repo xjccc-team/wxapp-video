@@ -84,6 +84,13 @@ class XHR {
       type: 'GET'
     })
   }
+  videoDetail (json) { // 视频详情
+    return fetch({
+      url: `${fetch.URLS}//video/detail`,
+      body: json,
+      type: 'GET'
+    })
+  }
 }
 
 export default new XHR()

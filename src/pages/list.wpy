@@ -135,9 +135,8 @@
         }
       },
       toDetail(item) {
-        wx.setStorageSync('videoDetail', item)
         wx.navigateTo({
-          url: `/pages/videoDetail?detail=${item}`
+          url: `/pages/videoDetail?code=${item.code}`
         })
       }
     }
