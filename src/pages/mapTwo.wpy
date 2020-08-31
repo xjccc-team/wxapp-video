@@ -1,0 +1,125 @@
+
+<template>
+ <view class="container">
+   <view class="top">已点亮 12 座城市</view>
+   <map id="map" longitude="113.324520" latitude="23.099994" scale="4" markers="{{markers}}"  ></map>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import testMixin from '../mixins/test'
+  import { connect } from 'wepy-redux'
+  // import XHR from '../api/'
+  @connect({
+    isLine (state) {
+      return state.counter.isLine
+    },
+    userinfo (state) {
+      return state.counter.userinfo
+    }
+  })
+  export default class videoDetail extends wepy.page {
+    config = {
+      navigationBarTitleText: '',
+      navigationBarBackgroundColor: '#C70019',
+      navigationBarTextStyle: 'white'
+    }
+    components = {
+    }
+    mixins = [testMixin]
+    data = {
+      markers: [{
+        iconPath: 'https://www.wingstechnology.cn/mpimage/newImages/prise.png',
+        id: 0,
+        latitude: 39.55,
+        longitude: 116.24,
+        name: '北京',
+        width: 20,
+        height: 20
+      },
+      {
+        iconPath: 'https://www.wingstechnology.cn/mpimage/newImages/prise.png',
+        id: 0,
+        latitude: 39.12,
+        longitude: 117.20,
+        name: '天津',
+        width: 20,
+        height: 20
+      },
+      {
+        iconPath: 'https://www.wingstechnology.cn/mpimage/newImages/prise.png',
+        id: 0,
+        latitude: 39.12,
+        longitude: 117.20,
+        name: '大连',
+        width: 20,
+        height: 20
+      },
+      {
+        iconPath: 'https://www.wingstechnology.cn/mpimage/newImages/prise.png',
+        id: 0,
+        latitude: 36.40,
+        longitude: 117.00,
+        name: '济南',
+        width: 20,
+        height: 20
+      },
+      {
+        iconPath: 'https://www.wingstechnology.cn/mpimage/newImages/prise.png',
+        id: 0,
+        latitude: 36.03,
+        longitude: 120.18,
+        name: '青岛',
+        width: 20,
+        height: 20
+      }]
+    }
+    computed = {
+    }
+    regionchange(e) {
+      console.log(e.type)
+    }
+    markertap(e) {
+      console.log(e.detail.markerId)
+    }
+    controltap(e) {
+      console.log(e.detail.controlId)
+    }
+    onShareAppMessage(res) {
+      if (res.from === 'button') {
+        return {
+          title: '一起为五矿十周年加油',
+          imageUrl: this.detail.imageSrc,
+          path: `/pages/videoDetail?code=${this.detail.code}`
+        }
+      }
+    }
+    methods = {
+  
+    }
+    events = {
+    }
+  
+    onLoad () {
+    }
+  }
+</script>
+<style lang="less" scoped>
+.container{
+  position: relative;
+  align-items: center;
+  .top{
+    width: 100%;
+    height: 110rpx;
+    background: #C70019;
+    text-align: center;
+    line-height: 110rpx;
+    color: #fff;
+  }
+  #map{
+    width: 100%;
+    flex: 1;
+  }
+}
+</style>
