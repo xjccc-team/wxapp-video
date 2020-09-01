@@ -288,9 +288,11 @@
    .video-item{
     background:rgba(255,255,255,1);
     box-shadow:0px 20rpx 20rpx rgba(0,0,0,0.06);
+    border: 1rpx solid rgba(112, 112, 112, 0.23137254901960783);
     margin-bottom: 33rpx;
     border-radius: 10rpx;
     position: relative;
+    overflow: hidden;
     z-index: 1;
     .video-info{
       width:100%;
@@ -326,7 +328,10 @@
         width: 60rpx;
         height: 60rpx;
         border-radius: 50%;
-        margin:-30rpx auto 14rpx;
+        overflow: hidden;
+        margin:-30rpx 0 14rpx;
+        border: 2rpx solid #FFFFFF;
+        box-shadow: 0px 3rpx 6px rgba(0, 0, 0, 0.16);
       }
       .name{
         height:37rpx;

@@ -35,6 +35,7 @@ export default class extends wepy.app {
   }
 
   globalData = {
+    isIpx: false,
     userInfo: null,
     openid: ''
   }
@@ -80,6 +81,14 @@ export default class extends wepy.app {
       wepy.$store.dispatch({ type: 'OPENID', payload: openid })
       this.queryUser(openid)
     }
+    wx.getSystemInfo({
+      success: (res) => {
+        console.log(res.model)
+        if (res.model.indexOf('iPhone X') > -1) {
+          this.globalData.isIpx = true
+        }
+      }
+    })
   }
   // 获取openid
   getopenId (code) {

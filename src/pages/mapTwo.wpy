@@ -1,7 +1,7 @@
 
 <template>
  <view class="container">
-   <view class="top">已点亮 12 座城市</view>
+   <view class="top">已点亮 {{markers.length}} 座城市</view>
    <map id="map" longitude="113.324520" latitude="23.099994" scale="4" markers="{{markers}}"  ></map>
   </view>
 </template>
