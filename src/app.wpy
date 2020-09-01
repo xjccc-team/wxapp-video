@@ -83,9 +83,9 @@ export default class extends wepy.app {
     }
     wx.getSystemInfo({
       success: (res) => {
-        console.log(res.model)
-        if (res.model.indexOf('iPhone X') > -1) {
+        if (/iPhone X|iPhone 11|iPhone 11 Pro Max/i.test(res.model)) {
           this.globalData.isIpx = true
+          wepy.$store.dispatch({ type: 'ISIPX', payload: true })
         }
       }
     })

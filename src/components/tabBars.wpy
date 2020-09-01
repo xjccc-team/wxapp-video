@@ -32,6 +32,9 @@
     },
     userinfo (state) {
       return state.counter.userinfo
+    },
+    isIpx (state) {
+      return state.counter.isIpx
     }
   })
   export default class tabBars extends wepy.component {
@@ -119,8 +122,6 @@
     }
 
     onLoad() {
-      this.isIpx = this.$parent.$parent.globalData.isIpx
-      this.$apply()
     }
   }
 </script>
@@ -132,7 +133,7 @@
     box-shadow: 0px -10px 20px rgba(0, 0, 0, 0.05);
     display: flex;
     &.isIpx{
-      padding-bottom: 30rpx;
+      padding-bottom: 68rpx;
     }
     .item{
       flex: 1;

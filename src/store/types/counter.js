@@ -13,3 +13,5 @@ export const OPENID = 'OPENID'
 export const VIDEONOW = 'VIDEONOW'
 
 export const ISLINE = 'ISLINE'
+
+export const ISIPX = 'ISIPX'
