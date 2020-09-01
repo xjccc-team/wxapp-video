@@ -14,12 +14,11 @@ wepy.$store = store
 export default class extends wepy.app {
   config = {
     pages: [
-      // 'pages/mapTwo',
       'pages/index',
       'pages/list',
       'pages/videoDetail',
+      'pages/mapTwo',
       'pages/share',
-      'pages/map',
       'pages/user'
     ],
     window: {

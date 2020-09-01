@@ -10,7 +10,7 @@
   import wepy from 'wepy'
   import testMixin from '../mixins/test'
   import { connect } from 'wepy-redux'
-  // import XHR from '../api/'
+  import XHR from '../api/'
   @connect({
     isLine (state) {
       return state.counter.isLine
@@ -19,7 +19,7 @@
       return state.counter.userinfo
     }
   })
-  export default class videoDetail extends wepy.page {
+  export default class mapTwo extends wepy.page {
     config = {
       navigationBarTitleText: '',
       navigationBarBackgroundColor: '#C70019',
@@ -29,51 +29,7 @@
     }
     mixins = [testMixin]
     data = {
-      markers: [{
-        iconPath: 'https://www.wingstechnology.cn/mpimage/newImages/prise.png',
-        id: 0,
-        latitude: 39.55,
-        longitude: 116.24,
-        name: '北京',
-        width: 20,
-        height: 20
-      },
-      {
-        iconPath: 'https://www.wingstechnology.cn/mpimage/newImages/prise.png',
-        id: 0,
-        latitude: 39.12,
-        longitude: 117.20,
-        name: '天津',
-        width: 20,
-        height: 20
-      },
-      {
-        iconPath: 'https://www.wingstechnology.cn/mpimage/newImages/prise.png',
-        id: 0,
-        latitude: 39.12,
-        longitude: 117.20,
-        name: '大连',
-        width: 20,
-        height: 20
-      },
-      {
-        iconPath: 'https://www.wingstechnology.cn/mpimage/newImages/prise.png',
-        id: 0,
-        latitude: 36.40,
-        longitude: 117.00,
-        name: '济南',
-        width: 20,
-        height: 20
-      },
-      {
-        iconPath: 'https://www.wingstechnology.cn/mpimage/newImages/prise.png',
-        id: 0,
-        latitude: 36.03,
-        longitude: 120.18,
-        name: '青岛',
-        width: 20,
-        height: 20
-      }]
+      markers: []
     }
     computed = {
     }
@@ -86,22 +42,26 @@
     controltap(e) {
       console.log(e.detail.controlId)
     }
-    onShareAppMessage(res) {
-      if (res.from === 'button') {
-        return {
-          title: '一起为五矿十周年加油',
-          imageUrl: this.detail.imageSrc,
-          path: `/pages/videoDetail?code=${this.detail.code}`
-        }
-      }
-    }
     methods = {
   
     }
     events = {
     }
-  
+    getMapList() {
+      wx.showLoading({
+        title: '加载中'
+      })
+      XHR.mapList().then(res => {
+        let {data, status} = res.data
+        wx.hideLoading()
+        if (status === 0) {
+          this.markers = data
+          this.$apply()
+        }
+      })
+    }
     onLoad () {
+      this.getMapList()
     }
   }
 </script>

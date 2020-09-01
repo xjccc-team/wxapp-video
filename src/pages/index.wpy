@@ -67,7 +67,7 @@
       },
       toMap() {
         wx.navigateTo({
-          url: '/pages/map'
+          url: '/pages/mapTwo'
         })
       }
     }

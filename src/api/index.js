@@ -86,7 +86,15 @@ class XHR {
   }
   videoDetail (json) { // 视频详情
     return fetch({
-      url: `${fetch.URLS}//video/detail`,
+      url: `${fetch.URLS}/video/detail`,
+      body: json,
+      type: 'GET'
+    })
+  }
+  // 地图城市列表获取
+  mapList (json) {
+    return fetch({
+      url: `${fetch.URLS}/lightmap/list`,
       body: json,
       type: 'GET'
     })
