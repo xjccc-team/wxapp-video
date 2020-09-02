@@ -99,6 +99,14 @@ class XHR {
       type: 'GET'
     })
   }
+  // 获取分部视频列表
+  adminVideoList (json) {
+    return fetch({
+      url: `${fetch.URLS}/adminVideo/list`,
+      body: json,
+      type: 'GET'
+    })
+  }
 }
 
 export default new XHR()

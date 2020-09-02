@@ -1,9 +1,23 @@
 
 <template>
  <view class="container">
-   <view class="top">已点亮 {{markers.length}} 座城市</view>
-   <map id="map" longitude="113.324520" latitude="23.099994" scale="4" markers="{{markers}}"></map>
-   <view class="ownVideo"></view>
+   <view class="top">已点亮 {{lightLength}} 座城市</view>
+   <map id="map" longitude="113.324520" latitude="23.099994" scale="4" markers="{{markers}}">
+   </map>
+  <cover-view class="video-list">
+      <cover-view class="ownVideo">
+      <cover-view class="item" @tap="toDetail({{item}})" wx:for="{{videoLists}}" wx:key="index">
+        <cover-view class="left">
+            <cover-view class="name">{{item.name}}</cover-view>
+            <cover-view class="des">{{item.description}}</cover-view>
+        </cover-view>
+        <cover-view class="right">
+          <cover-image class="play"  src="https://www.wingstechnology.cn/mpimage/newimages/play-icon.png" />
+        </cover-view>
+        <cover-view class="line"></cover-view>
+      </cover-view>
+    </cover-view>
+  </cover-view>
   </view>
 </template>
 
@@ -22,7 +36,7 @@
   })
   export default class mapTwo extends wepy.page {
     config = {
-      navigationBarTitleText: '',
+      navigationBarTitleText: '点亮城市',
       navigationBarBackgroundColor: '#C70019',
       navigationBarTextStyle: 'white'
     }
@@ -30,7 +44,9 @@
     }
     mixins = [testMixin]
     data = {
-      markers: []
+      markers: [],
+      videoLists: [],
+      lightLength: 0
     }
     computed = {
     }
@@ -44,7 +60,11 @@
       console.log(e.detail.controlId)
     }
     methods = {
-  
+      toDetail(item) {
+        // wx.navigateTo({
+        //   url: `/pages/videoDetail?code=88705204127670289`
+        // })
+      }
     }
     events = {
     }
@@ -56,13 +76,28 @@
         let {data, status} = res.data
         wx.hideLoading()
         if (status === 0) {
-          this.markers = data
+          this.markers = data.map(item => {
+            if (item.status) {
+              this.lightLength++
+            }
+            return item
+          })
+          this.$apply()
+        }
+      })
+    }
+    adminVideoList() {
+      XHR.adminVideoList().then(res => {
+        let {data, status} = res.data
+        if (status === 0) {
+          this.videoLists = data
           this.$apply()
         }
       })
     }
     onLoad () {
       this.getMapList()
+      this.adminVideoList()
     }
   }
 </script>
@@ -70,11 +105,14 @@
 .container{
   position: relative;
   align-items: center;
+  overflow: hidden;
+  z-index: 1;
+  background: #FAFAFA;
   .top{
     width: 100%;
-    height: 106rpx;
     background: #C70019;
     text-align: center;
+    padding-top:20rpx;
     padding-bottom:28rpx; 
     line-height: 40rpx;
     box-sizing: border-box;
@@ -83,9 +121,70 @@
   #map{
     width: 100%;
     flex: 1;
+    position: relative;
+    z-index: -1;
+  }
+  .video-list{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
   }
   .ownVideo{
     max-height: 484rpx;
+    padding: 20rpx 0 16rpx;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 5;
+    background: #fff;
+    margin-top: 1px;
+    border-radius: 10px 10px 0px 0px;
+    overflow-y: scroll;
+    .item{
+      padding: 30rpx 40rpx;
+      position: relative;
+      .name{
+        height: 45rpx;
+        font-size: 32rpx;
+        line-height: 45rpx;
+        color: #000000;
+      }
+      .des{
+        height: 36rpx;
+        font-size: 26rpx;
+        font-weight: 400;
+        line-height: 36rpx;
+        color: #666666;
+        margin-top: 12rpx;
+        padding-right: 160rpx;
+      }
+      .line{
+        position: absolute;
+        left: 30rpx;
+        bottom: 0;
+        right: 30rpx;
+        height: 1px;
+         background-color:  #707070;
+        color: rgba(0,0,0,0.1);
+        transform-origin: 0 100%;
+        transform: scaleY(0.5);
+      }
+      .right{
+        position: absolute;
+        width: 130rpx;
+        height: 130rpx;
+        right: 10rpx;
+        top:30rpx;
+        z-index: 2;
+        .play{
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+    
   }
 }
 </style>
