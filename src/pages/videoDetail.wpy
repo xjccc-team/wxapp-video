@@ -2,9 +2,9 @@
 <template>
  <view class="container">
    <view class="header">
-     <image class="avatar" mode="aspectFill" src="{{detail.headImageUrl}}" />
+     <image class="avatar" mode="aspectFill" src="{{detail.headImageUrl||'../images/log.jpg'}}" />
      <view class="info">
-       <view class="name">{{detail.nickname}}</view>
+       <view class="name">{{detail.nickname||detail.name}}</view>
        <view class="footer">{{topFooter}}</view>
      </view>
    </view>
@@ -45,7 +45,9 @@
     data = {
       tags: ['其他', '公司员工', '公司客户', '合作伙伴'],
       detail: {},
-      topFooter: ''
+      topFooter: '',
+      shareUrl: '',
+      option: {}
     }
     computed = {
     }
@@ -54,13 +56,17 @@
         return {
           title: '一起为五矿十周年加油',
           imageUrl: this.detail.imageSrc,
-          path: `/pages/videoDetail?code=${this.detail.code}`
+          path: this.shareUrl
         }
       }
     }
     methods = {
       toPrise() {
-        XHR.videoPraise({
+        let apiName = 'videoPraise'
+        if (this.option.type) {
+          apiName = 'adminVideoPraise'
+        }
+        XHR[apiName]({
           openId: this.$parent.globalData.openid,
           videoRecordCode: this.detail.code
         }).then(res => {
@@ -96,6 +102,23 @@
             title: this.detail.nickname
           })
           this.topFooter = this.showFooter()
+          this.shareUrl = `/pages/videoDetail?code=${this.detail.code}`
+          this.$apply()
+        } else {
+          wx.showToast({title: message, icon: 'none', duration: 2000})
+        }
+      })
+    }
+    getAdminVideoInfo(code) {
+      XHR.adminVideoInfo({openId: this.$parent.globalData.openid, code: code}).then(res => {
+        let {message, status, data} = res.data
+        if (status === 0) {
+          this.detail = data
+          wx.setNavigationBarTitle({
+            title: this.detail.name
+          })
+          this.topFooter = this.detail.createdOn
+          this.shareUrl = `/pages/videoDetail?code=${this.detail.code}&type=1`
           this.$apply()
         } else {
           wx.showToast({title: message, icon: 'none', duration: 2000})
@@ -103,7 +126,14 @@
       })
     }
     onLoad (option) {
-      this.getDetail(option.code)
+      // type存在需要获取分部视频详情 不存在获取广场视频详情
+      this.option = option
+      this.$apply()
+      if (option.type) {
+        this.getAdminVideoInfo(option.code)
+      } else {
+        this.getDetail(option.code)
+      }
     }
   }
 </script>

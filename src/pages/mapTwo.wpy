@@ -2,7 +2,7 @@
 <template>
  <view class="container">
    <view class="top">已点亮 {{lightLength}} 座城市</view>
-   <map id="map" longitude="113.324520" latitude="23.099994" scale="4" markers="{{markers}}">
+   <map id="map" scale="4" markers="{{markers}}">
    </map>
   <cover-view class="video-list">
       <cover-view class="ownVideo">
@@ -61,9 +61,9 @@
     }
     methods = {
       toDetail(item) {
-        // wx.navigateTo({
-        //   url: `/pages/videoDetail?code=88705204127670289`
-        // })
+        wx.navigateTo({
+          url: `/pages/videoDetail?code=${item.code}&type=1`
+        })
       }
     }
     events = {
@@ -76,7 +76,9 @@
         let {data, status} = res.data
         wx.hideLoading()
         if (status === 0) {
+          let tiem = +new Date()
           this.markers = data.map(item => {
+            item.iconPath = item.iconPath + '?time=' + tiem
             if (item.status) {
               this.lightLength++
             }

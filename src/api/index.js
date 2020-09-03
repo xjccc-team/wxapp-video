@@ -91,6 +91,22 @@ class XHR {
       type: 'GET'
     })
   }
+  // 分部视频详情
+  adminVideoInfo (json) {
+    return fetch({
+      url: `${fetch.URLS}/adminVideo/info`,
+      body: json,
+      type: 'GET'
+    })
+  }
+  // 分部视频点赞
+  adminVideoPraise (json) {
+    return fetch({
+      url: `${fetch.URLS}/adminVideo/praise`,
+      body: json,
+      type: 'POST'
+    })
+  }
   // 地图城市列表获取
   mapList (json) {
     return fetch({
