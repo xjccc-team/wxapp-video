@@ -2,9 +2,10 @@
 <template>
  <view class="container">
    <view class="top">已点亮 {{lightLength}} 座城市</view>
-   <map id="map" scale="4" markers="{{markers}}">
+   <map id="map" class="{{isIpx?'isIpx':''}}" scale="4" markers="{{markers}}">
    </map>
-  <cover-view class="video-list">
+   <view class="{{isIpx?'isIpx':''}}" wx:if="{{isIpx}}"></view>
+  <cover-view  class="{{isIpx?'isIpx video-list':'video-list'}}">
     <cover-view class="ownVideo">
         <cover-view class="item" @tap="toDetail({{item}})" wx:for="{{videoLists}}" wx:key="index">
           <cover-view class="bg"></cover-view>
@@ -34,6 +35,9 @@
     },
     userinfo (state) {
       return state.counter.userinfo
+    },
+    isIpx (state) {
+      return state.counter.isIpx
     }
   })
   export default class mapTwo extends wepy.page {
@@ -128,12 +132,20 @@
     position: relative;
     z-index: -1;
   }
+  .isIpx{
+    padding-bottom: 68rpx;
+    width: 100%;
+  }
   .video-list{
     position: fixed;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: 100;
+    &.isIpx{
+      padding-bottom: 0;
+      bottom: 68rpx;
+    }
   }
   .ownVideo{
     max-height: 544rpx;
