@@ -5,17 +5,19 @@
    <map id="map" scale="4" markers="{{markers}}">
    </map>
   <cover-view class="video-list">
-      <cover-view class="ownVideo">
-      <cover-view class="item" @tap="toDetail({{item}})" wx:for="{{videoLists}}" wx:key="index">
-        <cover-view class="left">
-            <cover-view class="name">{{item.name}}</cover-view>
-            <cover-view class="des">{{item.description}}</cover-view>
-        </cover-view>
-        <cover-view class="right">
-          <cover-image class="play"  src="https://www.wingstechnology.cn/mpimage/newimages/play-icon.png" />
+    <cover-view class="ownVideo">
+        <cover-view class="item" @tap="toDetail({{item}})" wx:for="{{videoLists}}" wx:key="index">
+          <cover-view class="bg"></cover-view>
+          <cover-view class="left">
+              <cover-view class="name">{{item.name}}</cover-view>
+              <cover-view class="des">{{item.description}}</cover-view>
+          </cover-view>
+          <cover-view class="right">
+            <cover-view class="text">播放视频</cover-view>
+            <cover-image class="play"  src="https://www.wingstechnology.cn/mpimage/newimages/play.png" />
+          </cover-view>
         </cover-view>
         <cover-view class="line"></cover-view>
-      </cover-view>
     </cover-view>
   </cover-view>
   </view>
@@ -134,8 +136,8 @@
     z-index: 100;
   }
   .ownVideo{
-    max-height: 484rpx;
-    padding: 20rpx 0 16rpx;
+    max-height: 544rpx;
+    padding: 20rpx 0;
     box-sizing: border-box;
     position: relative;
     z-index: 5;
@@ -143,46 +145,70 @@
     margin-top: 1px;
     border-radius: 10px 10px 0px 0px;
     overflow-y: scroll;
+    .line{
+      height: 20rpx;
+    }
     .item{
-      padding: 30rpx 40rpx;
+      margin: 0 40rpx 20rpx;
       position: relative;
-      .name{
-        height: 45rpx;
-        font-size: 32rpx;
-        line-height: 45rpx;
-        color: #000000;
-      }
-      .des{
-        height: 36rpx;
-        font-size: 26rpx;
-        font-weight: 400;
-        line-height: 36rpx;
-        color: #666666;
-        margin-top: 12rpx;
-        padding-right: 160rpx;
-      }
-      .line{
+      height: 140rpx;
+      display: flex;
+      align-items: center;
+      z-index: 1;
+      .bg{
+        border: 2rpx solid #707070;
+        border-radius: 10rpx;
         position: absolute;
-        left: 30rpx;
+        z-index: -1;
+        left: 0;
+        right: 0;
+        top: 0;
         bottom: 0;
-        right: 30rpx;
-        height: 1px;
-         background-color:  #707070;
-        color: rgba(0,0,0,0.1);
-        transform-origin: 0 100%;
-        transform: scaleY(0.5);
+        box-shadow: 0rpx 3px 6px rgba(0, 0, 0, 0.16);
+        background: linear-gradient(272deg, #FFFFFF 0%, #BEBEBE 100%);
+        opacity: 0.17;
+      }
+      .left{
+        flex:1;
+        padding:20rpx 0 26rpx 30rpx;
+        box-sizing: border-box;
+        .name{
+          height: 45rpx;
+          font-size: 32rpx;
+          line-height: 45rpx;
+          color: #000000;
+          font-weight: bold;
+        }
+        .des{
+          height: 36rpx;
+          font-size: 26rpx;
+          font-weight: 400;
+          line-height: 36rpx;
+          color: #666666;
+          margin-top: 12rpx;
+        }
       }
       .right{
-        position: absolute;
-        width: 130rpx;
-        height: 130rpx;
-        right: 10rpx;
-        top:30rpx;
-        z-index: 2;
+        width: 222rpx;
+        height: 68rpx;
+        background: rgba(255, 255, 255, 0.67);
+        border: 1rpx solid #D6D6D6;
+        border-radius: 34rpx;
+        margin:0 24rpx;
+        font-size: 26rpx;
+        color: #C70019;
+        opacity: 0.67; 
+        position: relative;
+        display: flex;
+        align-items: center;
+        .text{
+          flex:1;
+          padding-left: 36rpx;
+          box-sizing: border-box;
+        }
         .play{
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
+          width: 64rpx;
+          height: 64rpx;
         }
       }
     }

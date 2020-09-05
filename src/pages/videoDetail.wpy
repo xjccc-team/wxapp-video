@@ -10,7 +10,7 @@
    </view>
    <view class="video-wrap">
      <image class="img" wx:if="{{!isLine}}" src="{{detail.imageSrc}}" />
-     <video class="video" wx:else initial-time="0" autoplay='{{true}}'  src="{{detail.videoSrc}}" controls></video>
+     <video class="video" wx:else initial-time="0" autoplay='{{true}}' object-fit="contain"  src="{{detail.videoSrc}}" controls></video>
      <text class="des">快来和我一起为五矿信托十周年加油祝福吧！</text>
    </view>
    <view class="footer-global">
